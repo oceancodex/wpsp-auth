@@ -2,33 +2,36 @@
 
 namespace WPSPCORE\Auth\Providers;
 
-class UsersProvider {
+use WPSPCORE\Base\BaseInstances;
+
+class UsersProvider extends BaseInstances {
 
 	protected string $table;
 
-	public function __construct(string $table = 'wp_users') {
-		$this->table = $table;
+	public function afterInstanceConstruct(): void {
+		$this->table = $this->funcs->_getDBCustomMigrationTableName('users');
 	}
 
 	public function retrieveById(int $id): ?\stdClass {
 		global $wpdb;
-		$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} WHERE ID = %d", $id));
+		$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} WHERE id = %d", $id));
 		return $row ?: null;
 	}
 
-	/**
-	 * Expected credentials:
-	 * - user_login
-	 * - password
-	 */
 	public function retrieveByCredentials(array $credentials): ?\stdClass {
 		global $wpdb;
-		if (empty($credentials['user_login'])) return null;
 
-		$row = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM {$this->table} WHERE user_login = %s",
-			$credentials['user_login']
-		));
+		$login = $credentials['login'] ?? null;
+		if (!$login) return null;
+
+		// Phân biệt email/username
+		if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} WHERE email = %s", $login));
+		}
+		else {
+			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} WHERE username = %s", $login));
+		}
+
 		return $row ?: null;
 	}
 }

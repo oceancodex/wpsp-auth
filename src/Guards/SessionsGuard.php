@@ -2,16 +2,17 @@
 
 namespace WPSPCORE\Auth\Guards;
 
-use WPSPCORE\Auth\Providers\AccountsProvider;
+use WPSPCORE\Auth\Providers\UsersProvider;
+use WPSPCORE\Base\BaseInstances;
 
-class SessionsGuard {
+class SessionsGuard extends BaseInstances {
 
-	protected AccountsProvider $provider;
-	protected string $sessionKey;
+	protected UsersProvider $provider;
+	protected string        $sessionKey;
 
-	public function __construct(AccountsProvider $provider, string $sessionKey = 'wpsp_auth_user_id') {
-		$this->provider   = $provider;
-		$this->sessionKey = $sessionKey;
+	public function afterInstanceConstruct(): void {
+		$this->provider   = $this->customProperties['provider'];
+		$this->sessionKey = $this->customProperties['session_key'];
 	}
 
 	/**
@@ -22,7 +23,7 @@ class SessionsGuard {
 
 		// Trường mật khẩu của bảng accounts là 'password'
 		if ($user && isset($credentials['password']) && wp_check_password($credentials['password'], $user->password)) {
-			$_SESSION[$this->sessionKey] = (int) $user->id;
+			$_SESSION[$this->sessionKey] = (int)$user->id;
 			return true;
 		}
 		return false;
@@ -38,7 +39,7 @@ class SessionsGuard {
 	}
 
 	public function id(): ?int {
-		return !empty($_SESSION[$this->sessionKey]) ? (int) $_SESSION[$this->sessionKey] : null;
+		return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
 	}
 
 	public function logout(): void {
