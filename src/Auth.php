@@ -72,7 +72,14 @@ class Auth extends BaseInstances {
 		$provider  = $providers[$providerName] ?? null;
 
 		if (!$provider || !isset($provider['driver'])) {
-			return new UsersProvider($mainPath, $rootNamespace, $prefixEnv);
+			return new UsersProvider(
+				$mainPath,
+				$rootNamespace,
+				$prefixEnv,
+				[
+					'table' => 'wp_wpsp_cm_users'
+				]
+			);
 		}
 
 		$driver = $provider['driver'];
@@ -80,20 +87,32 @@ class Auth extends BaseInstances {
 		// Eloquent provider
 		if ($driver === 'eloquent') {
 			$modelClass = $provider['model'] ?? null;
+			$table = 'cm_users';
 			if ($modelClass && class_exists($modelClass)) {
 				return new UsersProvider(
 					$mainPath,
 					$rootNamespace,
 					$prefixEnv,
-					['model_class' => $modelClass]
+					[
+						'table' => $table,
+						'options' => ['model_class' => $modelClass]
+					]
 				);
 			}
-			return new UsersProvider($mainPath, $rootNamespace, $prefixEnv);
+			return new UsersProvider(
+				$mainPath,
+				$rootNamespace,
+				$prefixEnv,
+				[
+					'table' => $table,
+					'options' => ['model_class' => $modelClass]
+				]
+			);
 		}
 
 		// Database provider
 		if ($driver === 'database') {
-			$table = $provider['table'] ?? null;
+			$table = $provider['table'] ?? 'wp_wpsp_cm_users';
 			return new UsersProvider($mainPath, $rootNamespace, $prefixEnv);
 		}
 

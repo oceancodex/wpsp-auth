@@ -29,7 +29,7 @@ class SessionsGuard extends BaseInstances {
 		return false;
 	}
 
-	public function user(): ?\stdClass {
+	public function user() {
 		$id = $this->id();
 		return $id ? $this->provider->retrieveById($id) : null;
 	}
