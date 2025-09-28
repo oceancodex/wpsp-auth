@@ -63,7 +63,7 @@ class UsersProvider extends BaseInstances {
 		if (empty($credentials['login'])) return null;
 
 		$row = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM {$this->table} WHERE user_login = %s",
+			"SELECT * FROM {$this->table} WHERE username = %s",
 			$credentials['login']
 		));
 		return $row ?: null;

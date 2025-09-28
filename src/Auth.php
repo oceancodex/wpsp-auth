@@ -11,11 +11,6 @@ class Auth extends BaseInstances {
 	protected array $guards = [];
 
 	public function guard(?string $name = null): SessionsGuard {
-		if (session_status() === PHP_SESSION_NONE) {
-			if (!headers_sent()) {
-				@session_start();
-			}
-		}
 
 		// Đọc toàn bộ config auth từ plugin chính (wpsp/config/auth.php)
 		$configs = $this->funcs->_config('auth') ?? [];
@@ -77,7 +72,7 @@ class Auth extends BaseInstances {
 				$rootNamespace,
 				$prefixEnv,
 				[
-					'table' => 'wp_wpsp_cm_users'
+					'table' => 'cm_users'
 				]
 			);
 		}
@@ -112,8 +107,15 @@ class Auth extends BaseInstances {
 
 		// Database provider
 		if ($driver === 'database') {
-			$table = $provider['table'] ?? 'wp_wpsp_cm_users';
-			return new UsersProvider($mainPath, $rootNamespace, $prefixEnv);
+			$table = $provider['table'] ?? 'cm_users';
+			return new UsersProvider(
+				$mainPath,
+				$rootNamespace,
+				$prefixEnv,
+				[
+					'table' => $table,
+				]
+			);
 		}
 
 		// Mặc định

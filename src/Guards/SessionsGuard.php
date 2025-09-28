@@ -20,8 +20,6 @@ class SessionsGuard extends BaseInstances {
 	 */
 	public function attempt(array $credentials): bool {
 		$user = $this->provider->retrieveByCredentials($credentials);
-
-		// Trường mật khẩu của bảng accounts là 'password'
 		if ($user && isset($credentials['password']) && wp_check_password($credentials['password'], $user->password)) {
 			$_SESSION[$this->sessionKey] = (int)$user->id;
 			return true;

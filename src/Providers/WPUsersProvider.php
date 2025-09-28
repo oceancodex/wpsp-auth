@@ -18,11 +18,11 @@ class WPUsersProvider {
 
 	public function retrieveByCredentials(array $credentials): ?\stdClass {
 		global $wpdb;
-		if (empty($credentials['user_login'])) return null;
+		if (empty($credentials['login'])) return null;
 
 		$row = $wpdb->get_row($wpdb->prepare(
 			"SELECT * FROM {$this->table} WHERE user_login = %s",
-			$credentials['user_login']
+			$credentials['login']
 		));
 		return $row ?: null;
 	}
