@@ -1,15 +1,19 @@
 <?php
 
-namespace WPSPCORE\Auth;
+namespace WPSPCORE\Auth\Drivers\Database;
 
-use stdClass;
 use WPSPCORE\Base\BaseInstances;
+use WPSPCORE\Permission\Collections\RolesCollection;
 
-class DBAuthUser extends BaseInstances {
-	public stdClass $raw;
+class User extends BaseInstances {
+	public $raw;
+	public $roles;
+	public $permissions;
 
 	public function afterInstanceConstruct(): void {
-		$this->raw = $this->customProperties['user'];
+		$this->raw         = $this->customProperties['user'];
+		$this->roles       = new RolesCollection($this->roles(), $this);
+		$this->permissions = $this->permissions();
 	}
 
 	public function id(): int {
@@ -58,16 +62,17 @@ class DBAuthUser extends BaseInstances {
             SELECT pr.name FROM {$p}permissions pr
             JOIN {$p}model_has_permissions mp ON mp.permission_id=pr.id
             WHERE mp.model_id=%d", $this->id()));
-		$via    = $wpdb->get_col($wpdb->prepare("
-            SELECT DISTINCT pr.name FROM {$p}permissions pr
-            JOIN {$p}role_has_permissions rp ON rp.permission_id=pr.id
-            JOIN {$p}model_has_roles mr ON mr.role_id=rp.role_id
-            WHERE mr.model_id=%d", $this->id()));
+//		$via    = $wpdb->get_col($wpdb->prepare("
+//            SELECT DISTINCT pr.name FROM {$p}permissions pr
+//            JOIN {$p}role_has_permissions rp ON rp.permission_id=pr.id
+//            JOIN {$p}model_has_roles mr ON mr.role_id=rp.role_id
+//            WHERE mr.model_id=%d", $this->id()));
 		return array_values(array_unique(array_merge($direct ?? [], $via ?? [])));
 	}
 
 	public function assignRole(string|array $roles): void {
-		global $wpdb; $p = $this->funcs->_getDBCustomMigrationTablePrefix();
+		global $wpdb;
+		$p      = $this->funcs->_getDBCustomMigrationTablePrefix();
 		$userId = $this->id();
 
 		$roleNames = is_array($roles) ? $roles : [$roles];
@@ -77,8 +82,8 @@ class DBAuthUser extends BaseInstances {
 
 		// Lấy id của các role theo name
 		$placeholders = implode(',', array_fill(0, count($roleNames), '%s'));
-		$sqlRoles = $wpdb->prepare("SELECT id, name FROM {$p}roles WHERE name IN ($placeholders)", ...$roleNames);
-		$rows = $wpdb->get_results($sqlRoles, ARRAY_A);
+		$sqlRoles     = $wpdb->prepare("SELECT id, name FROM {$p}roles WHERE name IN ($placeholders)", ...$roleNames);
+		$rows         = $wpdb->get_results($sqlRoles, ARRAY_A);
 
 		if (!$rows) return;
 
@@ -98,7 +103,8 @@ class DBAuthUser extends BaseInstances {
 	}
 
 	public function givePermissionTo(string|array $perms): void {
-		global $wpdb; $p = $this->funcs->_getDBCustomMigrationTablePrefix();
+		global $wpdb;
+		$p      = $this->funcs->_getDBCustomMigrationTablePrefix();
 		$userId = $this->id();
 
 		$permNames = is_array($perms) ? $perms : [$perms];
@@ -108,8 +114,8 @@ class DBAuthUser extends BaseInstances {
 
 		// Lấy id của các permission theo name
 		$placeholders = implode(',', array_fill(0, count($permNames), '%s'));
-		$sqlPerms = $wpdb->prepare("SELECT id, name FROM {$p}permissions WHERE name IN ($placeholders)", ...$permNames);
-		$rows = $wpdb->get_results($sqlPerms, ARRAY_A);
+		$sqlPerms     = $wpdb->prepare("SELECT id, name FROM {$p}permissions WHERE name IN ($placeholders)", ...$permNames);
+		$rows         = $wpdb->get_results($sqlPerms, ARRAY_A);
 
 		if (!$rows) return;
 
@@ -128,12 +134,12 @@ class DBAuthUser extends BaseInstances {
 		}
 	}
 
-	public function toArray() {
+	public function toArray(): array {
 		$data = is_object($this->raw) ? get_object_vars($this->raw) : (array)$this->raw;
 
 		// Gắn kèm các thông tin hay dùng
 		$data['id']          = $this->id();
-		$data['roles']       = $this->roles();
+		$data['roles']       = $this->roles->toArray();
 		$data['permissions'] = $this->permissions();
 
 		return $data;
