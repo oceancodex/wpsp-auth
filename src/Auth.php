@@ -21,7 +21,7 @@ class Auth extends BaseInstances {
 
 		// Nếu guard chưa khởi tạo thì build theo config
 		if (!isset($this->guards[$name])) {
-			$sessionKey = $this->funcs->_getAppShortName() . '_auth_session_user_id';
+			$sessionKey = $this->funcs->_getAppShortName() . '_auth_' . $name . '_session_user_id';
 
 			// Xác định provider được gán cho guard
 			$guardConfigName = $name;
@@ -48,6 +48,7 @@ class Auth extends BaseInstances {
 				[
 					'provider'    => $provider,
 					'session_key' => $sessionKey,
+					'guard_name'  => $name, // Thêm dòng này
 				]
 			);
 		}

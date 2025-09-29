@@ -24,25 +24,34 @@ class User extends BaseInstances {
 		global $wpdb;
 		$p   = $this->funcs->_getDBCustomMigrationTablePrefix();
 		$uid = $this->id();
+
+		// Lấy guard_name từ thuộc tính hoặc mặc định là 'web'
+		$guardName = $this->guard_name ?? 'web';
+
 		$sql = $wpdb->prepare("
             SELECT 1 FROM {$p}permissions pr
-            WHERE pr.name=%s AND (
+            WHERE pr.name=%s AND pr.guard_name=%s AND (
                 EXISTS (SELECT 1 FROM {$p}model_has_permissions mp WHERE mp.model_id=%d AND mp.permission_id=pr.id)
                 OR EXISTS (SELECT 1 FROM {$p}model_has_roles mr
+                           JOIN {$p}roles r ON r.id=mr.role_id
                            JOIN {$p}role_has_permissions rp ON rp.role_id=mr.role_id
-                           WHERE mr.model_id=%d AND rp.permission_id=pr.id)
-            ) LIMIT 1", $perm, $uid, $uid);
+                           WHERE mr.model_id=%d AND rp.permission_id=pr.id AND r.guard_name=%s)
+            ) LIMIT 1", $perm, $guardName, $uid, $uid, $guardName);
 		return (bool)$wpdb->get_var($sql);
 	}
 
 	public function hasRole(string $role): bool {
 		global $wpdb;
-		$p   = $this->funcs->_getDBCustomMigrationTablePrefix();
+		$p = $this->funcs->_getDBCustomMigrationTablePrefix();
+
+		// Lấy guard_name từ thuộc tính hoặc mặc định là 'web'
+		$guardName = $this->guard_name ?? 'web';
+
 		$sql = $wpdb->prepare("
             SELECT 1 FROM {$p}roles r
-            WHERE r.name=%s AND EXISTS (
+            WHERE r.name=%s AND r.guard_name=%s AND EXISTS (
                 SELECT 1 FROM {$p}model_has_roles mr WHERE mr.model_id=%d AND mr.role_id=r.id
-            ) LIMIT 1", $role, $this->id());
+            ) LIMIT 1", $role, $guardName, $this->id());
 		return (bool)$wpdb->get_var($sql);
 	}
 

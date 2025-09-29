@@ -9,10 +9,12 @@ class SessionsGuard extends BaseInstances {
 
 	protected UsersProvider $provider;
 	protected string        $sessionKey;
+	protected string        $guardName; // Thêm thuộc tính này
 
 	public function afterInstanceConstruct(): void {
 		$this->provider   = $this->customProperties['provider'];
 		$this->sessionKey = $this->customProperties['session_key'];
+		$this->guardName  = $this->customProperties['guard_name'] ?? 'web'; // Thêm dòng này
 	}
 
 	/**
@@ -29,7 +31,16 @@ class SessionsGuard extends BaseInstances {
 
 	public function user() {
 		$id = $this->id();
-		return $id ? $this->provider->retrieveById($id) : null;
+		if (!$id) return null;
+
+		$user = $this->provider->retrieveById($id);
+
+		// Tự động set guard_name cho user object
+		if ($user && is_object($user)) {
+			$user->guard_name = $this->guardName;
+		}
+
+		return $user;
 	}
 
 	public function check(): bool {
