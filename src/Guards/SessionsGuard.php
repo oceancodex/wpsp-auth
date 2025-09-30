@@ -2,10 +2,14 @@
 
 namespace WPSPCORE\Auth\Guards;
 
+use WPSPCORE\Auth\Drivers\Database\User;
 use WPSPCORE\Auth\Providers\UsersProvider;
 use WPSPCORE\Base\BaseInstances;
+use WPSPCORE\Permission\Traits\PermissionTrait;
 
 class SessionsGuard extends BaseInstances {
+
+	public ?User $DBAuthUser = null;
 
 	protected UsersProvider $provider;
 	protected string        $sessionKey;
@@ -29,6 +33,9 @@ class SessionsGuard extends BaseInstances {
 		return false;
 	}
 
+	/**
+	 * @return array|\Illuminate\Database\Eloquent\Model|object|\stdClass|null|PermissionTrait
+	 */
 	public function user() {
 		$id = $this->id();
 		if (!$id) return null;
@@ -38,6 +45,20 @@ class SessionsGuard extends BaseInstances {
 		// Tự động set guard_name cho user object
 		if ($user && is_object($user)) {
 			$user->guard_name = $this->guardName;
+		}
+
+		if ($user instanceof \stdClass) {
+			if (!($this->DBAuthUser instanceof User) || $this->DBAuthUser->raw !== $user) {
+				$this->DBAuthUser = new User(
+					$this->funcs->_getMainPath(),
+					$this->funcs->_getRootNamespace(),
+					$this->funcs->_getPrefixEnv(),
+					[
+						'user' => $user
+					]
+				);
+			}
+			return $this->DBAuthUser;
 		}
 
 		return $user;
