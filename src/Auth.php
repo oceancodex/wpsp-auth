@@ -10,7 +10,7 @@ class Auth extends BaseInstances {
 
 	protected array $guards = [];
 
-	public function guard(?string $name = null): SessionsGuard {
+	public function guard(?string $name = null) {
 
 		// Đọc toàn bộ config auth từ plugin chính (wpsp/config/auth.php)
 		$configs = $this->funcs->_config('auth') ?? [];
@@ -48,7 +48,7 @@ class Auth extends BaseInstances {
 				[
 					'provider'    => $provider,
 					'session_key' => $sessionKey,
-					'guard_name'  => $name, // Thêm dòng này
+					'guard_name'  => $name,
 				]
 			);
 		}
@@ -78,24 +78,30 @@ class Auth extends BaseInstances {
 			);
 		}
 
-		$driver = $provider['driver'];
+		$driver      = $provider['driver'];
+		$table       = $provider['table'] ?? 'cm_users';
+		$authService = $provider['auth_service'] ?? null;
 
 		// Eloquent provider
 		if ($driver === 'eloquent') {
 			$modelClass = $provider['model'] ?? null;
-			$table = 'cm_users';
 			if ($modelClass && class_exists($modelClass)) {
-				return new AuthServiceProvider(
-					$mainPath,
-					$rootNamespace,
-					$prefixEnv,
-					[
-						'table' => $table,
-						'options' => [
-							'model_class' => $modelClass
+				if ($authService) {
+					return new $authService($mainPath, $rootNamespace, $prefixEnv, ['table' => $table, 'options' => ['model_class' => $modelClass]]);
+				}
+				else {
+					return new AuthServiceProvider(
+						$mainPath,
+						$rootNamespace,
+						$prefixEnv,
+						[
+							'table' => $table,
+							'options' => [
+								'model_class' => $modelClass
+							]
 						]
-					]
-				);
+					);
+				}
 			}
 			return new AuthServiceProvider(
 				$mainPath,
@@ -112,15 +118,19 @@ class Auth extends BaseInstances {
 
 		// Database provider
 		if ($driver === 'database') {
-			$table = $provider['table'] ?? 'cm_users';
-			return new AuthServiceProvider(
-				$mainPath,
-				$rootNamespace,
-				$prefixEnv,
-				[
-					'table' => $table,
-				]
-			);
+			if ($authService) {
+				return new $authService($mainPath, $rootNamespace, $prefixEnv, ['table' => $table]);
+			}
+			else {
+				return new AuthServiceProvider(
+					$mainPath,
+					$rootNamespace,
+					$prefixEnv,
+					[
+						'table' => $table,
+					]
+				);
+			}
 		}
 
 		// Mặc định

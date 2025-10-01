@@ -9,11 +9,9 @@ class AuthServiceProvider extends BaseInstances {
 	/** @var string|null|\MongoDB\Laravel\Eloquent\Model|\Illuminate\Database\Eloquent\Model  */
 	private          $modelClass         = null;
 	private ?string  $table              = null;
-	protected ?array $formLoginFields    = ['login', 'email'];
-	protected ?array $formPasswordFields = ['password'];
+	protected ?array $formLoginFields    = ['login'];
 	protected ?array $dbIdFields         = ['id', 'ID'];
-	protected ?array $dbLoginFields      = ['username', 'email'];
-	protected ?array $dbPasswordFields   = ['password'];
+	protected ?array $dbLoginFields      = ['user_login', 'username', 'email'];
 
 	/*
 	 *
@@ -30,24 +28,50 @@ class AuthServiceProvider extends BaseInstances {
 
 	protected function findResultById(int $id): ?object {
 		if ($this->modelClass && class_exists($this->modelClass)) {
-			$model = ($this->modelClass)::query()->find($id);
+			/** @var \Illuminate\Database\Eloquent\Builder $query */
+			$query = ($this->modelClass)::query();
+
+			if (!empty($this->dbIdFields)) {
+				$query->where(function($q) use ($id) {
+					foreach ($this->dbIdFields as $dbIdField) {
+						$q->orWhereAny($dbIdField, $id);
+					}
+				});
+			}
+			else {
+				$query->where('id', $id);
+			}
+
+			$model = $query->get()->first();
+
 			return $model ?: null;
 		}
 		elseif ($this->table) {
 			global $wpdb;
 			$whereString = '';
+			$prepareArgs = [$id];
+
 			if (!empty($this->dbIdFields)) {
 				foreach ($this->dbIdFields as $key => $dbIdField) {
 					if ($key < 1) {
 						$whereString = "WHERE {$dbIdField} = %d";
 					}
 					else {
-						$whereString .= " OR $dbIdField = %d";
+						$whereString .= " OR {$dbIdField} = %d";
+						$prepareArgs[] = $id; // Thêm tham số cho mỗi OR
 					}
 				}
 			}
-			if (!$whereString) $whereString = "WHERE ID = %d";
-			$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} {$whereString}", $id));
+
+			if (!$whereString) {
+				$whereString = "WHERE id = %d";
+			}
+
+			// Truyền tất cả tham số vào prepare
+			$row = $wpdb->get_row($wpdb->prepare(
+				"SELECT * FROM {$this->table} {$whereString}",
+				...$prepareArgs
+			));
 			return $row ?: null;
 		}
 		return null;
@@ -55,35 +79,49 @@ class AuthServiceProvider extends BaseInstances {
 
 	protected function findResultByLogin(string $login): ?object {
 		if ($this->modelClass && class_exists($this->modelClass)) {
-			$model = ($this->modelClass)::query()
-				->where(function($q) use ($login) {
-					$q->where('username', $login)->orWhere('email', $login);
-					if (!empty($this->dbLoginFields)) {
-						foreach ($this->dbLoginFields as $dbLoginField) {
-							$q->orWhere($dbLoginField, $login);
-						}
+			/** @var \Illuminate\Database\Eloquent\Builder $query */
+			$query = ($this->modelClass)::query();
+
+			if (!empty($this->dbLoginFields)) {
+				$query->where(function($q) use ($login) {
+					foreach ($this->dbLoginFields as $dbLoginField) {
+						$q->orWhere($dbLoginField, $login);
 					}
-				})
-				->first();
+				});
+			}
+			else {
+				$query->where('username', $login);
+			}
+
+			$model = $query->get()->first();
+
 			return $model ?: null;
 		}
 		elseif ($this->table) {
 			global $wpdb;
 			$whereString = '';
+			$prepareArgs = [$login];
+
 			if (!empty($this->dbLoginFields)) {
 				foreach ($this->dbLoginFields as $key => $dbLoginField) {
 					if ($key < 1) {
 						$whereString = "WHERE {$dbLoginField} = %s";
 					}
 					else {
-						$whereString .= " OR $dbLoginField = %s";
+						$whereString .= " OR {$dbLoginField} = %s";
+						$prepareArgs[] = $login; // Thêm tham số cho mỗi OR
 					}
 				}
 			}
-			if (!$whereString) $whereString = "WHERE user_login = %s";
+
+			if (!$whereString) {
+				$whereString = "WHERE username = %s";
+			}
+
+			// Truyền tất cả tham số vào prepare
 			$row = $wpdb->get_row($wpdb->prepare(
 				"SELECT * FROM {$this->table} {$whereString}",
-				$login
+				...$prepareArgs
 			));
 			return $row ?: null;
 		}

@@ -13,7 +13,7 @@ class SessionsGuard extends BaseInstances {
 
 	protected AuthServiceProvider $provider;
 	protected string              $sessionKey;
-	protected string        $guardName;
+	protected string              $guardName;
 
 	/*
 	 *
@@ -89,7 +89,7 @@ class SessionsGuard extends BaseInstances {
 	 *
 	 */
 
-	public function getProvider () {
+	public function getProvider() {
 		return $this->provider;
 	}
 
