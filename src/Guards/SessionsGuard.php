@@ -3,7 +3,7 @@
 namespace WPSPCORE\Auth\Guards;
 
 use WPSPCORE\Auth\Drivers\Database\User;
-use WPSPCORE\Auth\Providers\UsersProvider;
+use WPSPCORE\Auth\Providers\AuthServiceProvider;
 use WPSPCORE\Base\BaseInstances;
 use WPSPCORE\Permission\Traits\PermissionTrait;
 
@@ -11,8 +11,8 @@ class SessionsGuard extends BaseInstances {
 
 	public ?User $DBAuthUser = null;
 
-	protected UsersProvider $provider;
-	protected string        $sessionKey;
+	protected AuthServiceProvider $provider;
+	protected string              $sessionKey;
 	protected string        $guardName;
 
 	/*

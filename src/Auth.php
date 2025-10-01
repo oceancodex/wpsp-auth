@@ -4,7 +4,7 @@ namespace WPSPCORE\Auth;
 
 use WPSPCORE\Base\BaseInstances;
 use WPSPCORE\Auth\Guards\SessionsGuard;
-use WPSPCORE\Auth\Providers\UsersProvider;
+use WPSPCORE\Auth\Providers\AuthServiceProvider;
 
 class Auth extends BaseInstances {
 
@@ -68,7 +68,7 @@ class Auth extends BaseInstances {
 		$provider  = $providers[$providerName] ?? null;
 
 		if (!$provider || !isset($provider['driver'])) {
-			return new UsersProvider(
+			return new AuthServiceProvider(
 				$mainPath,
 				$rootNamespace,
 				$prefixEnv,
@@ -85,23 +85,27 @@ class Auth extends BaseInstances {
 			$modelClass = $provider['model'] ?? null;
 			$table = 'cm_users';
 			if ($modelClass && class_exists($modelClass)) {
-				return new UsersProvider(
+				return new AuthServiceProvider(
 					$mainPath,
 					$rootNamespace,
 					$prefixEnv,
 					[
 						'table' => $table,
-						'options' => ['model_class' => $modelClass]
+						'options' => [
+							'model_class' => $modelClass
+						]
 					]
 				);
 			}
-			return new UsersProvider(
+			return new AuthServiceProvider(
 				$mainPath,
 				$rootNamespace,
 				$prefixEnv,
 				[
 					'table' => $table,
-					'options' => ['model_class' => $modelClass]
+					'options' => [
+						'model_class' => $modelClass
+					]
 				]
 			);
 		}
@@ -109,7 +113,7 @@ class Auth extends BaseInstances {
 		// Database provider
 		if ($driver === 'database') {
 			$table = $provider['table'] ?? 'cm_users';
-			return new UsersProvider(
+			return new AuthServiceProvider(
 				$mainPath,
 				$rootNamespace,
 				$prefixEnv,
@@ -120,7 +124,7 @@ class Auth extends BaseInstances {
 		}
 
 		// Mặc định
-		return new UsersProvider($mainPath, $rootNamespace, $prefixEnv);
+		return new AuthServiceProvider($mainPath, $rootNamespace, $prefixEnv);
 	}
 
 }
