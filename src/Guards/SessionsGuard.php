@@ -13,17 +13,22 @@ class SessionsGuard extends BaseInstances {
 
 	protected UsersProvider $provider;
 	protected string        $sessionKey;
-	protected string        $guardName; // Thêm thuộc tính này
+	protected string        $guardName;
+
+	/*
+	 *
+	 */
 
 	public function afterInstanceConstruct(): void {
 		$this->provider   = $this->customProperties['provider'];
 		$this->sessionKey = $this->customProperties['session_key'];
-		$this->guardName  = $this->customProperties['guard_name'] ?? 'web'; // Thêm dòng này
+		$this->guardName  = $this->customProperties['guard_name'] ?? 'web';
 	}
 
-	/**
-	 * credentials: ['login' => username|email, 'password' => string]
+	/*
+	 *
 	 */
+
 	public function attempt(array $credentials): bool {
 		$user = $this->provider->retrieveByCredentials($credentials);
 		if ($user && isset($credentials['password']) && wp_check_password($credentials['password'], $user->password)) {
@@ -32,6 +37,10 @@ class SessionsGuard extends BaseInstances {
 		}
 		return false;
 	}
+
+	/*
+	 *
+	 */
 
 	/**
 	 * @return array|\Illuminate\Database\Eloquent\Model|object|\stdClass|null|PermissionTrait
@@ -54,7 +63,7 @@ class SessionsGuard extends BaseInstances {
 					$this->funcs->_getRootNamespace(),
 					$this->funcs->_getPrefixEnv(),
 					[
-						'user' => $user
+						'user' => $user,
 					]
 				);
 			}
@@ -75,4 +84,13 @@ class SessionsGuard extends BaseInstances {
 	public function logout(): void {
 		unset($_SESSION[$this->sessionKey]);
 	}
+
+	/*
+	 *
+	 */
+
+	public function getProvider () {
+		return $this->provider;
+	}
+
 }

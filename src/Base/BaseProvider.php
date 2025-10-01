@@ -1,10 +1,10 @@
 <?php
 
-namespace WPSPCORE\Auth\Providers;
+namespace WPSPCORE\Auth\Base;
 
-use WPSPCORE\Auth\Base\BaseProvider;
+use WPSPCORE\Base\BaseInstances;
 
-class UsersProvider extends BaseProvider {
+class BaseProvider extends BaseInstances {
 
 	protected string $table;
 
