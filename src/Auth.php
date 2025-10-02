@@ -2,6 +2,7 @@
 
 namespace WPSPCORE\Auth;
 
+use WPSPCORE\Auth\Guards\TokensGuard;
 use WPSPCORE\Base\BaseInstances;
 use WPSPCORE\Auth\Guards\SessionsGuard;
 use WPSPCORE\Auth\Providers\AuthServiceProvider;
@@ -37,20 +38,33 @@ class Auth extends BaseInstances {
 				$configs
 			);
 
-			// Khởi tạo guard dựa trên driver (mặc định session)
+			// Khởi tạo guard theo driver
 			$driver = $guardConfig['driver'] ?? 'session';
 
-			// Hiện tại chỉ hỗ trợ session guard
-			$this->guards[$name] = new SessionsGuard(
-				$this->mainPath,
-				$this->rootNamespace,
-				$this->prefixEnv,
-				[
-					'provider'    => $provider,
-					'session_key' => $sessionKey,
-					'guard_name'  => $name,
-				]
-			);
+			// ... existing code ...
+			if ($driver === 'token') {
+				$this->guards[$name] = new TokensGuard(
+					$this->mainPath,
+					$this->rootNamespace,
+					$this->prefixEnv,
+					[
+						'provider'   => $provider,
+						'guard_name' => $name,
+					]
+				);
+			}
+			else {
+				$this->guards[$name] = new SessionsGuard(
+					$this->mainPath,
+					$this->rootNamespace,
+					$this->prefixEnv,
+					[
+						'provider'    => $provider,
+						'session_key' => $sessionKey,
+						'guard_name'  => $name,
+					]
+				);
+			}
 		}
 
 		return $this->guards[$name];
