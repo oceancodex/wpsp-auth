@@ -7,11 +7,13 @@ use WPSPCORE\Base\BaseInstances;
 class AuthServiceProvider extends BaseInstances {
 
 	/** @var string|null|\MongoDB\Laravel\Eloquent\Model|\Illuminate\Database\Eloquent\Model  */
-	private          $modelClass         = null;
-	private ?string  $table              = null;
-	protected ?array $formLoginFields    = ['login'];
-	protected ?array $dbIdFields         = ['id', 'ID'];
-	protected ?array $dbLoginFields      = ['user_login', 'username', 'email'];
+	private         $modelClass         = null;
+	private ?string $table              = null;
+	public ?array   $formLoginFields    = ['login'];
+	public ?array   $formPasswordFields = ['password'];
+	public ?array   $dbIdFields         = ['id', 'ID'];
+	public ?array   $dbLoginFields      = ['user_login', 'username', 'email'];
+	public ?array   $dbPasswordFields   = ['password'];
 
 	/*
 	 *
@@ -34,7 +36,7 @@ class AuthServiceProvider extends BaseInstances {
 			if (!empty($this->dbIdFields)) {
 				$query->where(function($q) use ($id) {
 					foreach ($this->dbIdFields as $dbIdField) {
-						$q->orWhereAny($dbIdField, $id);
+						$q->orWhere($dbIdField, $id);
 					}
 				});
 			}

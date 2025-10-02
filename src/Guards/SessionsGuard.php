@@ -9,7 +9,8 @@ use WPSPCORE\Permission\Traits\PermissionTrait;
 
 class SessionsGuard extends BaseInstances {
 
-	public ?User $DBAuthUser = null;
+	public ?User    $DBAuthUser    = null;
+	private ?object $cachedRawUser = null;
 
 	protected AuthServiceProvider $provider;
 	protected string              $sessionKey;
@@ -31,9 +32,28 @@ class SessionsGuard extends BaseInstances {
 
 	public function attempt(array $credentials): bool {
 		$user = $this->provider->retrieveByCredentials($credentials);
-		if ($user && isset($credentials['password']) && wp_check_password($credentials['password'], $user->password)) {
-			$_SESSION[$this->sessionKey] = (int)$user->id;
-			return true;
+		if (!$user) return false;
+
+		foreach ($this->provider->dbPasswordFields as $dbPasswordField) {
+			foreach ($this->provider->formPasswordFields as $formPasswordField) {
+				$given  = $credentials[$formPasswordField] ?? null;
+				$hashed = $user->{$dbPasswordField} ?? null;
+				if ($given !== null && $hashed && wp_check_password($given, $hashed)) {
+					$id = null;
+					foreach ($this->provider->dbIdFields as $dbIdField) {
+						try {
+							$id = $user->{$dbIdField} ?? null;
+						}
+						catch (\Exception $e) {
+							continue;
+						}
+						if ($id) break;
+					}
+					if ($id === null) return false;
+					$_SESSION[$this->sessionKey] = $id;
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -49,7 +69,13 @@ class SessionsGuard extends BaseInstances {
 		$id = $this->id();
 		if (!$id) return null;
 
-		$user = $this->provider->retrieveById($id);
+		if ($this->cachedRawUser && ((int)($this->cachedRawUser->id ?? $this->cachedRawUser->ID ?? 0)) === $id) {
+			$user = $this->cachedRawUser;
+		}
+		else {
+			$user = $this->provider->retrieveById($id);
+			$this->cachedRawUser = $user instanceof \stdClass ? $user : null;
+		}
 
 		// Tự động set guard_name cho user object
 		if ($user && is_object($user)) {
