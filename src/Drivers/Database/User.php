@@ -13,6 +13,7 @@ class User extends BaseInstances {
 	public $raw;
 	public $roles;
 	public $permissions;
+	public $roles_and_permissions;
 
 	public function afterInstanceConstruct(): void {
 		$this->raw = $this->customProperties['user'];
@@ -24,6 +25,11 @@ class User extends BaseInstances {
 		if (method_exists($this, 'permissions')) {
 			$this->permissions = $this->permissions();
 		}
+
+		if (method_exists($this, 'rolesAndPermissions')) {
+			$this->roles_and_permissions = $this->rolesAndPermissions();
+		}
+
 	}
 
 	public function id(): int {
@@ -38,6 +44,10 @@ class User extends BaseInstances {
 
 		if (method_exists($this, 'permissions')) {
 			$data['permissions'] = $this->permissions;
+		}
+
+		if (method_exists($this, 'rolesAndPermissions')) {
+			$data['roles_and_permissions'] = $this->rolesAndPermissions();
 		}
 
 		return $data;

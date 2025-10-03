@@ -34,38 +34,27 @@ class SessionsGuard extends BaseInstances {
 		$user = $this->provider->retrieveByCredentials($credentials);
 		if (!$user) return false;
 
-		// Helper lấy giá trị field từ Model/stdClass/mảng
-		$get = static function($obj, string $field) {
-			if ($obj instanceof \Illuminate\Database\Eloquent\Model) {
-				return $obj->getAttribute($field);
-			}
-			if (is_object($obj)) {
-				return $obj->{$field} ?? null;
-			}
-			if (is_array($obj)) {
-				return $obj[$field] ?? null;
-			}
-			return null;
-		};
-
-		// Duyệt các cặp field password đã cấu hình
 		foreach ($this->provider->dbPasswordFields as $dbPasswordField) {
-			$hashed = $get($user, $dbPasswordField);
-			if (!$hashed) continue;
-
 			foreach ($this->provider->formPasswordFields as $formPasswordField) {
-				$given = $credentials[$formPasswordField] ?? null;
-				if ($given !== null && wp_check_password($given, (string)$hashed)) {
-					// Cache user cho request hiện tại (stateless)
-					$this->cachedRawUser = $user instanceof \Illuminate\Database\Eloquent\Model
-						? (object)$user->toArray()
-						: (is_object($user) ? $user : (object)$user);
-
+				$given  = $credentials[$formPasswordField] ?? null;
+				$hashed = $user->{$dbPasswordField} ?? null;
+				if ($given !== null && $hashed && wp_check_password($given, $hashed)) {
+					$id = null;
+					foreach ($this->provider->dbIdFields as $dbIdField) {
+						try {
+							$id = $user->{$dbIdField} ?? null;
+						}
+						catch (\Exception $e) {
+							continue;
+						}
+						if ($id) break;
+					}
+					if ($id === null) return false;
+					$_SESSION[$this->sessionKey] = $id;
 					return true;
 				}
 			}
 		}
-
 		return false;
 	}
 
