@@ -30,7 +30,7 @@ class SessionsGuard extends BaseInstances {
 	 *
 	 */
 
-	public function attempt(array $credentials): bool {
+	public function attempt(array $credentials) {
 		$user = $this->provider->retrieveByCredentials($credentials);
 		if (!$user) return false;
 
@@ -51,7 +51,7 @@ class SessionsGuard extends BaseInstances {
 					}
 					if ($id === null) return false;
 					$_SESSION[$this->sessionKey] = $id;
-					return true;
+					return $this;
 				}
 			}
 		}

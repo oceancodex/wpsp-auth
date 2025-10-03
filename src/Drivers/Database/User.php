@@ -13,41 +13,26 @@ class User extends BaseInstances {
 	public $roles;
 	public $permissions;
 	public $roles_and_permissions;
+	public $guard_name;
 
 	public function afterInstanceConstruct(): void {
-		$this->user = $this->customProperties['user'];
-
-		if (method_exists($this, 'roles')) {
-			$this->roles = $this->roles();
-		}
-
-		if (method_exists($this, 'permissions')) {
-			$this->permissions = $this->permissions();
-		}
-
-		if (method_exists($this, 'rolesAndPermissions')) {
-			$this->roles_and_permissions = $this->rolesAndPermissions();
-		}
-
+		$this->user                  = $this->customProperties['user'];
+		$this->guard_name            = $this->customProperties['guard_name'];
+		$this->roles                 = $this->roles();
+		$this->permissions           = $this->permissions();
+		$this->roles_and_permissions = $this->rolesAndPermissions();
 	}
 
 	public function id(): int {
-		return $this->user->id;
+		return $this->user->id ?? ($this->user->ID ?? 0);
 	}
 
 	public function toArray(): array {
 		$data = is_object($this->user) ? get_object_vars($this->user) : (array)$this->user;
 
-		$data['id']    = $this->id();
-		$data['roles'] = $this->roles;
-
-		if (method_exists($this, 'permissions')) {
-			$data['permissions'] = $this->permissions;
-		}
-
-		if (method_exists($this, 'rolesAndPermissions')) {
-			$data['roles_and_permissions'] = $this->roles_and_permissions;
-		}
+		$data['roles']                 = $this->roles;
+		$data['permissions']           = $this->permissions;
+		$data['roles_and_permissions'] = $this->roles_and_permissions;
 
 		return $data;
 	}

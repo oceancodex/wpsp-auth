@@ -32,28 +32,23 @@ class TokensGuard extends BaseInstances {
 	 */
 
 
-
-	public function attempt(array $credentials): bool {
+	public function attempt(array $credentials) {
 		$user = $this->provider->retrieveByCredentials($credentials);
 		if (!$user) return false;
 
-		// Helper lấy giá trị field từ Model/stdClass/mảng
-		$get = static function($obj, string $field) {
-			if ($obj instanceof \Illuminate\Database\Eloquent\Model) {
-				return $obj->getAttribute($field);
-			}
-			if (is_object($obj)) {
-				return $obj->{$field} ?? null;
-			}
-			if (is_array($obj)) {
-				return $obj[$field] ?? null;
-			}
-			return null;
-		};
-
 		// Duyệt các cặp field password đã cấu hình
 		foreach ($this->provider->dbPasswordFields as $dbPasswordField) {
-			$hashed = $get($user, $dbPasswordField);
+			// Lấy giá trị hashed password theo loại dữ liệu của $user (Model/stdClass/array)
+			$hashed = null;
+			if ($user instanceof \Illuminate\Database\Eloquent\Model) {
+				$hashed = $user->getAttribute($dbPasswordField);
+			}
+			elseif (is_object($user)) {
+				$hashed = $user->{$dbPasswordField} ?? null;
+			}
+			elseif (is_array($user)) {
+				$hashed = $user[$dbPasswordField] ?? null;
+			}
 			if (!$hashed) continue;
 
 			foreach ($this->provider->formPasswordFields as $formPasswordField) {
@@ -64,7 +59,7 @@ class TokensGuard extends BaseInstances {
 						? (object)$user->toArray()
 						: (is_object($user) ? $user : (object)$user);
 
-					return true;
+					return $this;
 				}
 			}
 		}
@@ -80,7 +75,8 @@ class TokensGuard extends BaseInstances {
 	 * @return array|\Illuminate\Database\Eloquent\Model|object|\stdClass|null|PermissionTrait
 	 */
 	public function user() {
-		$raw = $this->rawUserFromToken();
+//		$raw = $this->rawUserFromToken();
+		$raw = $this->getCachedRawUser();
 		if (!$raw) return null;
 
 		// Set guard_name
@@ -93,7 +89,10 @@ class TokensGuard extends BaseInstances {
 					$this->funcs->_getMainPath(),
 					$this->funcs->_getRootNamespace(),
 					$this->funcs->_getPrefixEnv(),
-					['user' => $raw]
+					[
+						'user' => $raw,
+						'guard_name' => $this->guardName,
+					]
 				);
 			}
 			return $this->DBAuthUser;
@@ -136,6 +135,10 @@ class TokensGuard extends BaseInstances {
 	/*
 	 * Helpers
 	 */
+
+	public function getCachedRawUser(): ?object {
+		return $this->cachedRawUser;
+	}
 
 	protected function bearerToken(): ?string {
 		// Cache token theo request để tránh parse header nhiều lần
