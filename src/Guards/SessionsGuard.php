@@ -83,7 +83,7 @@ class SessionsGuard extends BaseInstances {
 		}
 
 		if ($user instanceof \stdClass) {
-			if (!($this->DBAuthUser instanceof User) || $this->DBAuthUser->raw !== $user) {
+			if (!($this->DBAuthUser instanceof User) || $this->DBAuthUser->user !== $user) {
 				$this->DBAuthUser = new User(
 					$this->funcs->_getMainPath(),
 					$this->funcs->_getRootNamespace(),
