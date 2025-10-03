@@ -70,13 +70,6 @@ class Auth extends BaseInstances {
 		return $this->guards[$name];
 	}
 
-	/**
-	 * Tạo provider theo tên từ mảng config auth.
-	 * Hỗ trợ:
-	 * - driver = 'eloquent': sử dụng model được chỉ định trong config
-	 * - driver = 'database': sử dụng bảng chỉ định (tối thiểu cần 'table')
-	 * - fallback: AccountsProvider mặc định (đọc từ bảng accounts tùy chỉnh)
-	 */
 	protected static function makeProvider(string $mainPath, string $rootNamespace, string $prefixEnv, string $providerName, array $configs) {
 		$providers = $configs['providers'] ?? [];
 		$provider  = $providers[$providerName] ?? null;

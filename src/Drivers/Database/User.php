@@ -3,23 +3,22 @@
 namespace WPSPCORE\Auth\Drivers\Database;
 
 use WPSPCORE\Base\BaseInstances;
-use WPSPCORE\Permission\Collections\RolesCollection;
 use WPSPCORE\Permission\Traits\DBPermissionTrait;
 
 class User extends BaseInstances {
 
 	use DBPermissionTrait;
 
-	public $raw;
+	public $user;
 	public $roles;
 	public $permissions;
 	public $roles_and_permissions;
 
 	public function afterInstanceConstruct(): void {
-		$this->raw = $this->customProperties['user'];
+		$this->user = $this->customProperties['user'];
 
 		if (method_exists($this, 'roles')) {
-			$this->roles = new RolesCollection($this->roles(), $this);
+			$this->roles = $this->roles();
 		}
 
 		if (method_exists($this, 'permissions')) {
@@ -33,21 +32,21 @@ class User extends BaseInstances {
 	}
 
 	public function id(): int {
-		return (int)$this->raw->id;
+		return $this->user->id;
 	}
 
 	public function toArray(): array {
-		$data = is_object($this->raw) ? get_object_vars($this->raw) : (array)$this->raw;
+		$data = is_object($this->user) ? get_object_vars($this->user) : (array)$this->user;
 
 		$data['id']    = $this->id();
-		$data['roles'] = $this->roles->toArray();
+		$data['roles'] = $this->roles;
 
 		if (method_exists($this, 'permissions')) {
 			$data['permissions'] = $this->permissions;
 		}
 
 		if (method_exists($this, 'rolesAndPermissions')) {
-			$data['roles_and_permissions'] = $this->rolesAndPermissions();
+			$data['roles_and_permissions'] = $this->roles_and_permissions;
 		}
 
 		return $data;
