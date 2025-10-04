@@ -50,6 +50,7 @@ class Auth extends BaseInstances {
 					[
 						'provider'   => $provider,
 						'guard_name' => $name,
+						'guard_config' => $guardConfig,
 					]
 				);
 			}
@@ -62,6 +63,7 @@ class Auth extends BaseInstances {
 						'provider'    => $provider,
 						'session_key' => $sessionKey,
 						'guard_name'  => $name,
+						'guard_config' => $guardConfig,
 					]
 				);
 			}

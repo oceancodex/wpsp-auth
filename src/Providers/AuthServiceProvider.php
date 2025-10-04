@@ -11,10 +11,10 @@ class AuthServiceProvider extends BaseInstances {
 	private ?string $table              = null;
 	public ?array   $formLoginFields    = ['login'];
 	public ?array   $formPasswordFields = ['password'];
-	public ?array   $dbIdFields         = ['id', 'ID'];
-	public ?array   $dbLoginFields      = ['user_login', 'username', 'email'];
+	public ?array   $dbIdFields         = ['id'];
+	public ?array   $dbLoginFields      = ['username', 'email'];
 	public ?array   $dbPasswordFields   = ['password'];
-	public ?array   $dbTokenFields      = ['api_token', 'token', 'access_token'];
+	public ?array   $dbTokenFields      = ['api_token'];
 
 	/*
 	 *
