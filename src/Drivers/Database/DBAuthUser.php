@@ -38,4 +38,119 @@ class DBAuthUser extends BaseInstances {
 		return $data;
 	}
 
+	/**
+	 * Magic method to set properties on rawUser
+	 */
+	public function __set($name, $value) {
+		if (is_object($this->rawUser)) {
+			$this->rawUser->$name = $value;
+		}
+	}
+
+	/**
+	 * Magic method to get properties from rawUser
+	 */
+	public function __get($name) {
+		if (is_object($this->rawUser)) {
+			return $this->rawUser->$name ?? null;
+		}
+		return null;
+	}
+
+	/**
+	 * Magic method to check if property exists on rawUser
+	 */
+	public function __isset($name) {
+		if (is_object($this->rawUser)) {
+			return isset($this->rawUser->$name);
+		}
+		return false;
+	}
+
+	/**
+	 * Save the user to database
+	 *
+	 * @return bool
+	 */
+	public function save(): bool {
+		global $wpdb;
+
+		if (!$this->rawUser) {
+			return false;
+		}
+
+		$userId = $this->id();
+		if (!$userId) {
+			return false;
+		}
+
+		// Get the table name from the guard configuration
+		$tableName = $this->getTableName();
+		if (!$tableName) {
+			return false;
+		}
+
+		// Convert rawUser to array for update
+		$data = is_object($this->rawUser) ? get_object_vars($this->rawUser) : (array)$this->rawUser;
+
+		// Remove properties that shouldn't be saved
+		unset($data['guard_name']);
+		unset($data['id']);
+		unset($data['ID']);
+
+		// Prepare update data
+		$updateData = [];
+		$format = [];
+
+		foreach ($data as $key => $value) {
+			$updateData[$key] = $value;
+			$format[] = is_numeric($value) ? '%d' : '%s';
+		}
+
+		if (empty($updateData)) {
+			return false;
+		}
+
+		// Update the database
+		$result = $wpdb->update(
+			$tableName,
+			$updateData,
+			['id' => $userId],
+			$format,
+			['%d']
+		);
+
+		return $result !== false;
+	}
+
+	/**
+	 * Get table name from auth configuration
+	 *
+	 * @return string|null
+	 */
+	private function getTableName(): ?string {
+		// Get auth configuration
+		$authConfig = wpsp_config('auth');
+
+		if (!$authConfig || !isset($authConfig['guards'][$this->guardName])) {
+			return null;
+		}
+
+		$guard = $authConfig['guards'][$this->guardName];
+		$providerName = $guard['provider'] ?? null;
+
+		if (!$providerName || !isset($authConfig['providers'][$providerName])) {
+			return null;
+		}
+
+		$provider = $authConfig['providers'][$providerName];
+
+		// Return table name if it's a database provider
+		if ($provider['driver'] === 'database' && isset($provider['table'])) {
+			return $provider['table'];
+		}
+
+		return null;
+	}
+
 }

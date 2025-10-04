@@ -33,6 +33,7 @@ class TokensGuard extends BaseGuard {
 		else {
 			// Add guard name.
 			$this->rawUser->setAttribute('guard_name', $this->guardName);
+//			$this->rawUser->guard_name = $this->guardName;
 		}
 
 		return $this->rawUser;

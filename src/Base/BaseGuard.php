@@ -11,6 +11,7 @@ abstract class BaseGuard extends BaseInstances {
 	protected $guardName;
 	protected $guardConfig;
 
+	/** @var \WPSPCORE\Auth\Drivers\Database\DBAuthUser|\Illuminate\Database\Eloquent\Model|null */
 	protected $rawUser;
 
 	/*
