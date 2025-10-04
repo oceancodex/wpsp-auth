@@ -22,13 +22,11 @@ class TokensGuard extends BaseGuard {
 					$this->funcs->_getRootNamespace(),
 					$this->funcs->_getPrefixEnv(),
 					[
-						'raw_user' => $this->rawUser,
+						'guard_name' => $this->guardName,
+						'raw_user'   => $this->rawUser,
 					]
 				);
 			}
-
-			// Add guard name.
-			$this->rawUser->guard_name = $this->guardName;
 
 			return $this->DBAuthUser;
 		}

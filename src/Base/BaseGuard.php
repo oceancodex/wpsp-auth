@@ -67,7 +67,7 @@ abstract class BaseGuard extends BaseInstances {
 		return true;
 	}
 
-	public function attempt(array $credentials = []): bool|static {
+	public function attempt(array $credentials = []) {
 		$user = $this->provider->retrieveByCredentials($credentials);
 		if (!$user) return false;
 
@@ -90,7 +90,7 @@ abstract class BaseGuard extends BaseInstances {
 
 					if ($this->guardConfig['driver'] == 'session') {
 						$_SESSION[$this->sessionKey] = $id;
-						return true;
+						return $this;
 					}
 					elseif ($this->guardConfig['driver'] == 'token') {
 						$this->rawUser = $user;
