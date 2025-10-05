@@ -88,7 +88,7 @@ class Auth extends BaseInstances {
 		}
 
 		$driver      = $provider['driver'];
-		$table       = $provider['table'] ?? 'cm_users';
+		$table       = $provider['table'] ?? null;
 		$authService = $provider['auth_service'] ?? null;
 
 		// Eloquent provider

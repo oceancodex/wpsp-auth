@@ -55,6 +55,15 @@ abstract class BaseGuard extends BaseInstances {
 	}
 
 	public function check(): bool {
+		if ($this->guardConfig['driver'] == 'token') {
+			$authHeader = $this->request->headers->get('Authorization');
+			if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $m)) {
+				return false;
+			}
+			$token = trim($m[1] ?? '');
+			$user = $this->provider->retrieveByToken($token);
+			if ($user) return true;
+		}
 		return $this->id() !== null;
 	}
 

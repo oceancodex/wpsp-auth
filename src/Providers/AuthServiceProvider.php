@@ -139,6 +139,57 @@ class AuthServiceProvider extends BaseInstances {
 		return $this->findResultById($id);
 	}
 
+	public function retrieveByToken(string $token) {
+		if ($this->modelClass && class_exists($this->modelClass)) {
+			/** @var \Illuminate\Database\Eloquent\Builder $query */
+			$query = ($this->modelClass)::query();
+
+			if (!empty($this->dbTokenFields)) {
+				$query->where(function($q) use ($token) {
+					foreach ($this->dbTokenFields as $dbTokenField) {
+						$q->orWhere($dbTokenField, $token);
+					}
+				});
+			}
+			else {
+				$query->where('api_token', $token);
+			}
+
+			$model = $query->get()->first();
+
+			return $model ?: null;
+		}
+		elseif ($this->table) {
+			global $wpdb;
+			$whereString = '';
+			$prepareArgs = [$token];
+
+			if (!empty($this->dbTokenFields)) {
+				foreach ($this->dbTokenFields as $key => $dbTokenField) {
+					if ($key < 1) {
+						$whereString = "WHERE {$dbTokenField} = %s";
+					}
+					else {
+						$whereString .= " OR {$dbTokenField} = %s";
+						$prepareArgs[] = $token; // Thêm tham số cho mỗi OR
+					}
+				}
+			}
+
+			if (!$whereString) {
+				$whereString = "WHERE api_token = %s";
+			}
+
+			// Truyền tất cả tham số vào prepare
+			$row = $wpdb->get_row($wpdb->prepare(
+				"SELECT * FROM {$this->table} {$whereString}",
+				...$prepareArgs
+			));
+			return $row ?: null;
+		}
+		return null;
+	}
+
 	public function retrieveByCredentials(array $credentials) {
 		if (!empty($this->formLoginFields)) {
 			foreach ($this->formLoginFields as $formLoginField) {
