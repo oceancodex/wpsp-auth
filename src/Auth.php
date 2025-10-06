@@ -41,28 +41,43 @@ class Auth extends BaseInstances {
 			// Khởi tạo guard theo driver
 			$driver = $guardConfig['driver'] ?? 'session';
 
-			// ... existing code ...
-			if ($driver === 'token') {
+			// Sanctum guard
+			if ($driver === 'sanctum') {
+				$this->guards[$name] = new \WPSPCORE\Sanctum\Sanctum(
+					$this->mainPath,
+					$this->rootNamespace,
+					$this->prefixEnv,
+					[
+						'provider'     => $provider,
+						'session_key'  => $sessionKey,
+						'guard_name'   => $name,
+						'guard_config' => $guardConfig,
+					]
+				);
+			}
+			// Token guard
+			elseif ($driver === 'token') {
 				$this->guards[$name] = new TokensGuard(
 					$this->mainPath,
 					$this->rootNamespace,
 					$this->prefixEnv,
 					[
-						'provider'   => $provider,
-						'guard_name' => $name,
+						'provider'     => $provider,
+						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
 					]
 				);
 			}
+			// Session guard (default)
 			else {
 				$this->guards[$name] = new SessionsGuard(
 					$this->mainPath,
 					$this->rootNamespace,
 					$this->prefixEnv,
 					[
-						'provider'    => $provider,
-						'session_key' => $sessionKey,
-						'guard_name'  => $name,
+						'provider'     => $provider,
+						'session_key'  => $sessionKey,
+						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
 					]
 				);
@@ -72,7 +87,7 @@ class Auth extends BaseInstances {
 		return $this->guards[$name];
 	}
 
-	protected static function makeProvider(string $mainPath, string $rootNamespace, string $prefixEnv, string $providerName, array $configs) {
+	public static function makeProvider(string $mainPath, string $rootNamespace, string $prefixEnv, string $providerName, array $configs) {
 		$providers = $configs['providers'] ?? [];
 		$provider  = $providers[$providerName] ?? null;
 
@@ -82,7 +97,7 @@ class Auth extends BaseInstances {
 				$rootNamespace,
 				$prefixEnv,
 				[
-					'table' => 'cm_users'
+					'table' => 'cm_users',
 				]
 			);
 		}
@@ -104,10 +119,10 @@ class Auth extends BaseInstances {
 						$rootNamespace,
 						$prefixEnv,
 						[
-							'table' => $table,
+							'table'   => $table,
 							'options' => [
-								'model_class' => $modelClass
-							]
+								'model_class' => $modelClass,
+							],
 						]
 					);
 				}
@@ -117,10 +132,10 @@ class Auth extends BaseInstances {
 				$rootNamespace,
 				$prefixEnv,
 				[
-					'table' => $table,
+					'table'   => $table,
 					'options' => [
-						'model_class' => $modelClass
-					]
+						'model_class' => $modelClass,
+					],
 				]
 			);
 		}

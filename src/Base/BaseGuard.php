@@ -18,7 +18,7 @@ abstract class BaseGuard extends BaseInstances {
 	 *
 	 */
 
-	public function afterInstanceConstruct(): void {
+	public function afterInstanceConstruct() {
 		$this->provider    = $this->customProperties['provider'];
 		$this->sessionKey  = $this->customProperties['session_key'];
 		$this->guardName   = $this->customProperties['guard_name'] ?? 'web';
@@ -46,6 +46,9 @@ abstract class BaseGuard extends BaseInstances {
 
 	public function id() {
 		if ($this->guardConfig['driver'] == 'session') {
+			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
+		}
+		elseif ($this->guardConfig['driver'] == 'sanctum') {
 			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
 		}
 		elseif ($this->guardConfig['driver'] == 'token') {
@@ -104,6 +107,10 @@ abstract class BaseGuard extends BaseInstances {
 					}
 					elseif ($this->guardConfig['driver'] == 'token') {
 						$this->rawUser = $user;
+						return $this;
+					}
+					elseif ($this->guardConfig['driver'] == 'sanctum') {
+						$_SESSION[$this->sessionKey] = $id;
 						return $this;
 					}
 				}

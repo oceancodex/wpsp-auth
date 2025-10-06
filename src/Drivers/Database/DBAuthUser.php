@@ -130,7 +130,7 @@ class DBAuthUser extends BaseInstances {
 	 */
 	private function getTableName(): ?string {
 		// Get auth configuration
-		$authConfig = wpsp_config('auth');
+		$authConfig = $this->funcs->_config('auth');
 
 		if (!$authConfig || !isset($authConfig['guards'][$this->guardName])) {
 			return null;

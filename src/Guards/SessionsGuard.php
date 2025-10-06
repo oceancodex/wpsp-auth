@@ -4,15 +4,11 @@ namespace WPSPCORE\Auth\Guards;
 
 use WPSPCORE\Auth\Base\BaseGuard;
 use WPSPCORE\Auth\Drivers\Database\DBAuthUser;
-use WPSPCORE\Permission\Traits\PermissionTrait;
 
 class SessionsGuard extends BaseGuard {
 
 	private ?DBAuthUser $DBAuthUser = null;
 
-	/**
-	 * @return array|\Illuminate\Database\Eloquent\Model|object|\stdClass|null|PermissionTrait
-	 */
 	public function user() {
 		$id = $this->id();
 		if (!$id) return null;
