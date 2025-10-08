@@ -1,6 +1,6 @@
 <?php
 
-namespace WPSPCORE\Auth\Drivers\Database;
+namespace WPSPCORE\Auth\Models;
 
 use WPSPCORE\Base\BaseInstances;
 use WPSPCORE\Permission\Traits\DBPermissionTrait;
@@ -39,18 +39,12 @@ class DBAuthUser extends BaseInstances {
 		return $data;
 	}
 
-	/**
-	 * Magic method to set properties on rawUser
-	 */
 	public function __set($name, $value) {
 		if (is_object($this->rawUser)) {
 			$this->rawUser->$name = $value;
 		}
 	}
 
-	/**
-	 * Magic method to get properties from rawUser
-	 */
 	public function __get($name) {
 		if (is_object($this->rawUser)) {
 			return $this->rawUser->$name ?? null;
@@ -58,9 +52,6 @@ class DBAuthUser extends BaseInstances {
 		return null;
 	}
 
-	/**
-	 * Magic method to check if property exists on rawUser
-	 */
 	public function __isset($name) {
 		if (is_object($this->rawUser)) {
 			return isset($this->rawUser->$name);
@@ -68,11 +59,6 @@ class DBAuthUser extends BaseInstances {
 		return false;
 	}
 
-	/**
-	 * Save the user to database
-	 *
-	 * @return bool
-	 */
 	public function save(): bool {
 		global $wpdb;
 
@@ -124,11 +110,6 @@ class DBAuthUser extends BaseInstances {
 		return $result !== false;
 	}
 
-	/**
-	 * Get table name from auth configuration
-	 *
-	 * @return string|null
-	 */
 	private function getTableName(): ?string {
 		// Get auth configuration
 		$authConfig = $this->funcs->_config('auth');

@@ -6,15 +6,15 @@ use WPSPCORE\Base\BaseInstances;
 
 class AuthServiceProvider extends BaseInstances {
 
-	/** @var string|null|\MongoDB\Laravel\Eloquent\Model|\Illuminate\Database\Eloquent\Model  */
-	private         $modelClass         = null;
-	private ?string $table              = null;
-	public ?array   $formLoginFields    = ['login'];
-	public ?array   $formPasswordFields = ['password'];
-	public ?array   $dbIdFields         = ['id'];
-	public ?array   $dbLoginFields      = ['username', 'email'];
-	public ?array   $dbPasswordFields   = ['password'];
-	public ?array   $dbTokenFields      = ['api_token'];
+	/** @var string|null|\MongoDB\Laravel\Eloquent\Model|\Illuminate\Database\Eloquent\Model */
+	public         $modelClass         = null;
+	public ?string $table              = null;
+	public ?array  $formLoginFields    = ['login'];
+	public ?array  $formPasswordFields = ['password'];
+	public ?array  $dbIdFields         = ['id'];
+	public ?array  $dbLoginFields      = ['username', 'email'];
+	public ?array  $dbPasswordFields   = ['password'];
+	public ?array  $dbTokenFields      = ['api_token'];
 
 	/*
 	 *
@@ -29,7 +29,7 @@ class AuthServiceProvider extends BaseInstances {
 	 *
 	 */
 
-	protected function findResultById(int $id): ?object {
+	public function findResultById(int $id): ?object {
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
@@ -60,7 +60,7 @@ class AuthServiceProvider extends BaseInstances {
 						$whereString = "WHERE {$dbIdField} = %d";
 					}
 					else {
-						$whereString .= " OR {$dbIdField} = %d";
+						$whereString   .= " OR {$dbIdField} = %d";
 						$prepareArgs[] = $id; // Thêm tham số cho mỗi OR
 					}
 				}
@@ -80,7 +80,7 @@ class AuthServiceProvider extends BaseInstances {
 		return null;
 	}
 
-	protected function findResultByLogin(string $login): ?object {
+	public function findResultByLogin(string $login): ?object {
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
@@ -111,7 +111,7 @@ class AuthServiceProvider extends BaseInstances {
 						$whereString = "WHERE {$dbLoginField} = %s";
 					}
 					else {
-						$whereString .= " OR {$dbLoginField} = %s";
+						$whereString   .= " OR {$dbLoginField} = %s";
 						$prepareArgs[] = $login; // Thêm tham số cho mỗi OR
 					}
 				}
@@ -170,7 +170,7 @@ class AuthServiceProvider extends BaseInstances {
 						$whereString = "WHERE {$dbTokenField} = %s";
 					}
 					else {
-						$whereString .= " OR {$dbTokenField} = %s";
+						$whereString   .= " OR {$dbTokenField} = %s";
 						$prepareArgs[] = $token; // Thêm tham số cho mỗi OR
 					}
 				}
@@ -189,6 +189,8 @@ class AuthServiceProvider extends BaseInstances {
 		}
 		return null;
 	}
+
+	public function retrieveByAccessToken(string $token) {}
 
 	public function retrieveByCredentials(array $credentials) {
 		if (!empty($this->formLoginFields)) {

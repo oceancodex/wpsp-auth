@@ -12,7 +12,7 @@ abstract class BaseGuard extends BaseInstances {
 	protected $guardConfig;
 
 	/** @var \WPSPCORE\Auth\Drivers\Database\DBAuthUser|\Illuminate\Database\Eloquent\Model|null */
-	protected $rawUser;
+	protected $authUser;
 
 	/*
 	 *
@@ -52,19 +52,15 @@ abstract class BaseGuard extends BaseInstances {
 			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
 		}
 		elseif ($this->guardConfig['driver'] == 'token') {
-			return $this->rawUser->id;
+			return $this->authUser->id;
 		}
 		return null;
 	}
 
 	public function check(): bool {
 		if ($this->guardConfig['driver'] == 'token') {
-			$authHeader = $this->request->headers->get('Authorization');
-			if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $m)) {
-				return false;
-			}
-			$token = trim($m[1] ?? '');
-			$user = $this->provider->retrieveByToken($token);
+			$token = $this->funcs->_getBearerToken();
+			$user  = $this->provider->retrieveByToken($token);
 			if ($user) return true;
 		}
 		return $this->id() !== null;
@@ -78,7 +74,7 @@ abstract class BaseGuard extends BaseInstances {
 			unset($_SESSION[$this->sessionKey]);
 		}
 		elseif ($this->guardConfig['driver'] == 'token') {
-			$this->rawUser = null;
+			$this->authUser = null;
 		}
 		return true;
 	}
@@ -108,12 +104,12 @@ abstract class BaseGuard extends BaseInstances {
 						$_SESSION[$this->sessionKey] = $id;
 						return $this;
 					}
-					elseif ($this->guardConfig['driver'] == 'token') {
-						$this->rawUser = $user;
-						return $this;
-					}
 					elseif ($this->guardConfig['driver'] == 'sanctum') {
 						$_SESSION[$this->sessionKey] = $id;
+						return $this;
+					}
+					elseif ($this->guardConfig['driver'] == 'token') {
+						$this->authUser = $user;
 						return $this;
 					}
 				}

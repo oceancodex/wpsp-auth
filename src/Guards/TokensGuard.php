@@ -3,7 +3,7 @@
 namespace WPSPCORE\Auth\Guards;
 
 use WPSPCORE\Auth\Base\BaseGuard;
-use WPSPCORE\Auth\Drivers\Database\DBAuthUser;
+use WPSPCORE\Auth\Models\DBAuthUser;
 
 class TokensGuard extends BaseGuard {
 
