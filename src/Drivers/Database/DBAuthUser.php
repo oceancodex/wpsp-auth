@@ -4,16 +4,17 @@ namespace WPSPCORE\Auth\Drivers\Database;
 
 use WPSPCORE\Base\BaseInstances;
 use WPSPCORE\Permission\Traits\DBPermissionTrait;
+use WPSPCORE\Sanctum\Traits\DBSanctumTokensTrait;
 
 class DBAuthUser extends BaseInstances {
 
-	use DBPermissionTrait;
+	use DBPermissionTrait, DBSanctumTokensTrait;
 
+	public $guardName;
 	public $rawUser;
 	public $roles;
 	public $permissions;
 	public $rolesAndPermissions;
-	public $guardName;
 
 	public function afterInstanceConstruct(): void {
 		$this->guardName           = $this->customProperties['guard_name'];
