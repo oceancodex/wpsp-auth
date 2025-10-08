@@ -97,7 +97,8 @@ class Auth extends BaseInstances {
 				$rootNamespace,
 				$prefixEnv,
 				[
-					'table' => 'cm_users',
+					'table'       => 'cm_users',
+					'model_class' => null,
 				]
 			);
 		}
@@ -111,7 +112,10 @@ class Auth extends BaseInstances {
 			$modelClass = $provider['model'] ?? null;
 			if ($modelClass && class_exists($modelClass)) {
 				if ($authService) {
-					return new $authService($mainPath, $rootNamespace, $prefixEnv, ['table' => $table, 'options' => ['model_class' => $modelClass]]);
+					return new $authService($mainPath, $rootNamespace, $prefixEnv, [
+						'table'       => $table,
+						'model_class' => $modelClass,
+					]);
 				}
 				else {
 					return new AuthServiceProvider(
@@ -119,10 +123,8 @@ class Auth extends BaseInstances {
 						$rootNamespace,
 						$prefixEnv,
 						[
-							'table'   => $table,
-							'options' => [
-								'model_class' => $modelClass,
-							],
+							'table'       => $table,
+							'model_class' => $modelClass,
 						]
 					);
 				}
@@ -132,10 +134,8 @@ class Auth extends BaseInstances {
 				$rootNamespace,
 				$prefixEnv,
 				[
-					'table'   => $table,
-					'options' => [
-						'model_class' => $modelClass,
-					],
+					'table'       => $table,
+					'model_class' => $modelClass,
 				]
 			);
 		}
@@ -143,7 +143,10 @@ class Auth extends BaseInstances {
 		// Database provider
 		if ($driver === 'database') {
 			if ($authService) {
-				return new $authService($mainPath, $rootNamespace, $prefixEnv, ['table' => $table]);
+				return new $authService($mainPath, $rootNamespace, $prefixEnv, [
+					'table'       => $table,
+					'model_class' => null,
+				]);
 			}
 			else {
 				return new AuthServiceProvider(
@@ -151,7 +154,8 @@ class Auth extends BaseInstances {
 					$rootNamespace,
 					$prefixEnv,
 					[
-						'table' => $table,
+						'table'       => $table,
+						'model_class' => null,
 					]
 				);
 			}

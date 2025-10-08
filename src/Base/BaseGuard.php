@@ -74,6 +74,9 @@ abstract class BaseGuard extends BaseInstances {
 		if ($this->guardConfig['driver'] == 'session') {
 			unset($_SESSION[$this->sessionKey]);
 		}
+		elseif ($this->guardConfig['driver'] == 'sanctum') {
+			unset($_SESSION[$this->sessionKey]);
+		}
 		elseif ($this->guardConfig['driver'] == 'token') {
 			$this->rawUser = null;
 		}
