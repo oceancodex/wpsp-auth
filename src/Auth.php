@@ -162,7 +162,15 @@ class Auth extends BaseInstances {
 		}
 
 		// Mặc định
-		return new AuthServiceProvider($mainPath, $rootNamespace, $prefixEnv);
+		return new AuthServiceProvider(
+			$mainPath,
+			$rootNamespace,
+			$prefixEnv,
+			[
+				'table'       => $table,
+				'model_class' => null,
+			]
+		);
 	}
 
 }

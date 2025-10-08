@@ -11,26 +11,26 @@ class DBAuthUser extends BaseInstances {
 	use DBPermissionTrait, DBSanctumTokensTrait;
 
 	public $guardName;
-	public $rawUser;
+	public $authUser;
 	public $roles;
 	public $permissions;
 	public $rolesAndPermissions;
 
 	public function afterInstanceConstruct(): void {
 		$this->guardName           = $this->customProperties['guard_name'];
-		$this->rawUser             = $this->customProperties['raw_user'];
-		$this->rawUser->guard_name = $this->guardName;
+		$this->authUser             = $this->customProperties['auth_user'];
+		$this->authUser->guard_name = $this->guardName;
 //		$this->roles               = $this->roles();
 //		$this->permissions         = $this->permissions();
 //		$this->rolesAndPermissions = $this->rolesAndPermissions();
 	}
 
 	public function id(): int {
-		return $this->rawUser->id ?? ($this->rawUser->ID ?? 0);
+		return $this->authUser->id ?? ($this->authUser->ID ?? 0);
 	}
 
 	public function toArray(): array {
-		$data = is_object($this->rawUser) ? get_object_vars($this->rawUser) : (array)$this->rawUser;
+		$data = is_object($this->authUser) ? get_object_vars($this->authUser) : (array)$this->authUser;
 
 //		$data['roles']                 = $this->roles;
 //		$data['permissions']           = $this->permissions;
@@ -40,21 +40,21 @@ class DBAuthUser extends BaseInstances {
 	}
 
 	public function __set($name, $value) {
-		if (is_object($this->rawUser)) {
-			$this->rawUser->$name = $value;
+		if (is_object($this->authUser)) {
+			$this->authUser->$name = $value;
 		}
 	}
 
 	public function __get($name) {
-		if (is_object($this->rawUser)) {
-			return $this->rawUser->$name ?? null;
+		if (is_object($this->authUser)) {
+			return $this->authUser->$name ?? null;
 		}
 		return null;
 	}
 
 	public function __isset($name) {
-		if (is_object($this->rawUser)) {
-			return isset($this->rawUser->$name);
+		if (is_object($this->authUser)) {
+			return isset($this->authUser->$name);
 		}
 		return false;
 	}
@@ -62,7 +62,7 @@ class DBAuthUser extends BaseInstances {
 	public function save(): bool {
 		global $wpdb;
 
-		if (!$this->rawUser) {
+		if (!$this->authUser) {
 			return false;
 		}
 
@@ -77,8 +77,8 @@ class DBAuthUser extends BaseInstances {
 			return false;
 		}
 
-		// Convert rawUser to array for update
-		$data = is_object($this->rawUser) ? get_object_vars($this->rawUser) : (array)$this->rawUser;
+		// Convert authUser to array for update
+		$data = is_object($this->authUser) ? get_object_vars($this->authUser) : (array)$this->authUser;
 
 		// Remove properties that shouldn't be saved
 		unset($data['guard_name']);
