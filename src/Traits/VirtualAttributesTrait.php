@@ -2,13 +2,16 @@
 
 namespace WPSPCORE\Auth\Traits;
 
+/**
+ * @property string $guard_name
+ */
 trait VirtualAttributesTrait {
 
 	/**
 	 * Accessor để lấy guard_name
 	 * Không map tới cột DB, chỉ là virtual attribute
 	 */
-	public function getGuardNameAttribute(): ?string {
+	public function getGuardNameAttribute() {
 		// Lấy từ attributes nếu đã được set trong Guard
 		return $this->attributes['guard_name'] ?? null;
 	}
