@@ -6,7 +6,7 @@ use WPSPCORE\Base\BaseInstances;
 use WPSPCORE\Permission\Traits\DBPermissionTrait;
 use WPSPCORE\Sanctum\Traits\DBSanctumTokensTrait;
 
-class DBAuthUser extends BaseInstances {
+class DBAuthUserModel extends BaseInstances {
 
 	use DBPermissionTrait, DBSanctumTokensTrait;
 
