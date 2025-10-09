@@ -17,7 +17,7 @@ class DBAuthUserModel extends BaseInstances {
 	public $rolesAndPermissions;
 
 	public function afterInstanceConstruct(): void {
-		$this->guardName           = $this->customProperties['guard_name'];
+		$this->guardName            = $this->customProperties['guard_name'];
 		$this->authUser             = $this->customProperties['auth_user'];
 		$this->authUser->guard_name = $this->guardName;
 //		$this->roles               = $this->roles();

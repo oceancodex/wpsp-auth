@@ -44,37 +44,16 @@ abstract class BaseGuard extends BaseInstances {
 
 	abstract public function attempt(array $credentials = []);
 
+	abstract public function check(): bool;
+
+	abstract public function id(): ?int;
+
 	/*
 	 *
 	 */
 
-	public function id() {
-		if ($this->guardConfig['driver'] == 'session') {
-			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
-		}
-		elseif ($this->guardConfig['driver'] == 'token') {
-			if ($this->authUser === null) {
-				$this->attempt();
-			}
-			return $this->authUser->id;
-		}
-		return null;
-	}
-
-	public function check(): bool {
-//		if ($this->guardConfig['driver'] == 'token') {
-//			$apiToken = $this->funcs->_getBearerToken();
-//			$user     = $this->provider->retrieveByToken($apiToken);
-//			if ($user) return true;
-//		}
-		return $this->id() !== null;
-	}
-
-	public function logout(): true {
-		if ($this->guardConfig['driver'] == 'session') {
-			unset($_SESSION[$this->sessionKey]);
-		}
-		elseif ($this->guardConfig['driver'] == 'sanctum') {
+	public function logout(): bool {
+		if (in_array($this->guardConfig['driver'], ['session', 'sanctum'])) {
 			unset($_SESSION[$this->sessionKey]);
 		}
 		elseif ($this->guardConfig['driver'] == 'token') {

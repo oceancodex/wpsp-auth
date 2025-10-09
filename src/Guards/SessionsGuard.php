@@ -44,8 +44,24 @@ class SessionsGuard extends BaseGuard {
 		return false;
 	}
 
+	/*
+	 *
+	 */
+
+	public function id(): ?int {
+		return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
+	}
+
 	public function user() {
+		if (!$this->id()) return null;
+		$user = $this->provider->retrieveById($this->id());
+		if (!$user) return null;
+		$this->authUser = $this->prepareUser($user, DBAuthUserModel::class);
 		return $this->authUser;
+	}
+
+	public function check(): bool {
+		return $this->id() !== null;
 	}
 
 }

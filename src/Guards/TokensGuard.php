@@ -14,36 +14,25 @@ class TokensGuard extends BaseGuard {
 		if ($apiToken) {
 			$user = $this->provider->retrieveByToken($apiToken);
 			if (!$user) return false;
-			$this->authUser = $user;
+			$this->authUser = $this->prepareUser($user, DBAuthUserModel::class);
 			return $this;
 		}
 		return false;
 	}
 
+	/*
+	 *
+	 */
+
 	public function user() {
-		if ($this->authUser === null) {
+		if (!$this->authUser) {
 			$this->attempt();
 		}
 
 		if (!$this->authUser) return null;
 
-		if ($this->authUser instanceof \stdClass) {
-			if (!($this->DBAuthUser instanceof DBAuthUserModel) || $this->DBAuthUser->authUser !== $this->authUser) {
-				$this->DBAuthUser = new DBAuthUserModel(
-					$this->funcs->_getMainPath(),
-					$this->funcs->_getRootNamespace(),
-					$this->funcs->_getPrefixEnv(),
-					[
-						'auth_user'    => $this->authUser,
-						'provider'     => $this->provider,
-						'session_key'  => $this->sessionKey,
-						'guard_name'   => $this->guardName,
-						'guard_config' => $this->guardConfig,
-					]
-				);
-			}
-
-			return $this->DBAuthUser;
+		if ($this->authUser instanceof DBAuthUserModel) {
+			return $this->authUser;
 		}
 		else {
 			// Add guard name.
@@ -52,6 +41,17 @@ class TokensGuard extends BaseGuard {
 		}
 
 		return $this->authUser;
+	}
+
+	public function check(): bool {
+		$apiToken = $this->funcs->_getBearerToken();
+		$user     = $this->provider->retrieveByToken($apiToken);
+		if ($user) return true;
+		return false;
+	}
+
+	public function id(): int {
+		return (int)$this->authUser->id;
 	}
 
 }
