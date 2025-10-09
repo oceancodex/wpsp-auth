@@ -7,22 +7,46 @@ use WPSPCORE\Auth\Models\DBAuthUserModel;
 
 class TokensGuard extends BaseGuard {
 
-	private ?DBAuthUserModel $DBAuthUser = null;
-
 	public function attempt(array $credentials = []) {
-		$apiToken = $this->funcs->_getBearerToken();
-		if ($apiToken) {
-			$user = $this->provider->retrieveByToken($apiToken);
-			if (!$user) return false;
-			$this->authUser = $this->prepareUser($user, DBAuthUserModel::class);
-			return $this;
+
+		// Prepare credentials.
+		if (empty($credentials)) {
+			$credentials             = [];
+			$credentials['login']    = $this->request->get('login');
+			$credentials['password'] = $this->request->get('password');
 		}
+
+		// Get user by credentials, do not assign session.
+		if ($credentials['login'] && $credentials['password']) {
+			$user = $this->provider->retrieveByCredentials($credentials);
+			if ($user) {
+				$this->authUser = $this->prepareUser($user, DBAuthUserModel::class);
+				return $this;
+			}
+		}
+
+		// Get user by token.
+		else {
+			$apiToken = $this->funcs->_getBearerToken();
+			if ($apiToken) {
+				$user = $this->provider->retrieveByToken($apiToken);
+				if (!$user) return false;
+				$this->authUser = $this->prepareUser($user, DBAuthUserModel::class);
+				return $this;
+			}
+		}
+
 		return false;
+
 	}
 
 	/*
 	 *
 	 */
+
+	public function id(): ?int {
+		return $this->authUser->id ?? $this->authUser->ID ?? null;
+	}
 
 	public function user() {
 		if (!$this->authUser) {
@@ -44,14 +68,10 @@ class TokensGuard extends BaseGuard {
 	}
 
 	public function check(): bool {
-		$apiToken = $this->funcs->_getBearerToken();
-		$user     = $this->provider->retrieveByToken($apiToken);
-		if ($user) return true;
-		return false;
-	}
-
-	public function id(): int {
-		return (int)$this->authUser->id;
+		if (!$this->authUser) {
+			$this->attempt();
+		}
+		return $this->id() !== null;
 	}
 
 }

@@ -25,19 +25,9 @@ class DBAuthUserModel extends BaseInstances {
 //		$this->rolesAndPermissions = $this->rolesAndPermissions();
 	}
 
-	public function id(): int {
-		return $this->authUser->id ?? ($this->authUser->ID ?? 0);
-	}
-
-	public function toArray(): array {
-		$data = is_object($this->authUser) ? get_object_vars($this->authUser) : (array)$this->authUser;
-
-//		$data['roles']                 = $this->roles;
-//		$data['permissions']           = $this->permissions;
-//		$data['roles_and_permissions'] = $this->rolesAndPermissions;
-
-		return $data;
-	}
+	/*
+	 *
+	 */
 
 	public function __set($name, $value) {
 		if (is_object($this->authUser)) {
@@ -57,6 +47,14 @@ class DBAuthUserModel extends BaseInstances {
 			return isset($this->authUser->$name);
 		}
 		return false;
+	}
+
+	/*
+	 *
+	 */
+
+	public function id(): int {
+		return $this->authUser->id ?? ($this->authUser->ID ?? 0);
 	}
 
 	public function save(): bool {
@@ -110,6 +108,25 @@ class DBAuthUserModel extends BaseInstances {
 		return $result !== false;
 	}
 
+	/*
+	 *
+	 */
+
+
+	public function toArray(): array {
+		$data = is_object($this->authUser) ? get_object_vars($this->authUser) : (array)$this->authUser;
+
+//		$data['roles']                 = $this->roles;
+//		$data['permissions']           = $this->permissions;
+//		$data['roles_and_permissions'] = $this->rolesAndPermissions;
+
+		return $data;
+	}
+
+	/*
+	 *
+	 */
+
 	private function getTableName(): ?string {
 		// Get auth configuration
 		$authConfig = $this->funcs->_config('auth');
@@ -134,5 +151,4 @@ class DBAuthUserModel extends BaseInstances {
 
 		return null;
 	}
-
 }

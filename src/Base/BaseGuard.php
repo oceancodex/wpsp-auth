@@ -2,7 +2,6 @@
 
 namespace WPSPCORE\Auth\Base;
 
-use WPSPCORE\Auth\Models\DBAuthUserModel;
 use WPSPCORE\Base\BaseInstances;
 
 abstract class BaseGuard extends BaseInstances {
@@ -40,13 +39,13 @@ abstract class BaseGuard extends BaseInstances {
 	 *
 	 */
 
-	abstract public function user();
-
 	abstract public function attempt(array $credentials = []);
 
-	abstract public function check(): bool;
-
 	abstract public function id(): ?int;
+
+	abstract public function user();
+
+	abstract public function check(): bool;
 
 	/*
 	 *
