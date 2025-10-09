@@ -9,6 +9,23 @@ use WPSPCORE\Auth\Providers\AuthServiceProvider;
 
 class Auth extends BaseInstances {
 
+	public static ?self $instance   = null;
+
+	/*
+	 *
+	 */
+
+	public static function instance($mainPath, $rootNamespace, $prefixEnv): ?self {
+		if (!static::$instance) {
+			static::$instance = (new static(
+				$mainPath,
+				$rootNamespace,
+				$prefixEnv
+			));
+		}
+		return static::$instance;
+	}
+
 	protected array $guards = [];
 
 	public function guard(?string $name = null) {

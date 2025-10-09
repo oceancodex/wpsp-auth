@@ -139,7 +139,8 @@ class AuthServiceProvider extends BaseInstances {
 		return $this->findResultById($id);
 	}
 
-	public function retrieveByToken(string $token) {
+	public function retrieveByToken(?string $token = null) {
+		if (!$token) return null;
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
