@@ -52,17 +52,20 @@ abstract class BaseGuard extends BaseInstances {
 			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
 		}
 		elseif ($this->guardConfig['driver'] == 'token') {
+			if ($this->authUser === null) {
+				$this->attempt();
+			}
 			return $this->authUser->id;
 		}
 		return null;
 	}
 
 	public function check(): bool {
-		if ($this->guardConfig['driver'] == 'token') {
-			$token = $this->funcs->_getBearerToken();
-			$user  = $this->provider->retrieveByToken($token);
-			if ($user) return true;
-		}
+//		if ($this->guardConfig['driver'] == 'token') {
+//			$apiToken = $this->funcs->_getBearerToken();
+//			$user     = $this->provider->retrieveByToken($apiToken);
+//			if ($user) return true;
+//		}
 		return $this->id() !== null;
 	}
 
@@ -80,7 +83,24 @@ abstract class BaseGuard extends BaseInstances {
 	}
 
 	public function attempt(array $credentials = []) {
-		$user = $this->provider->retrieveByCredentials($credentials);
+		$user = null;
+
+		$apiToken = $this->funcs->_getBearerToken();
+		if ($apiToken) {
+			$user = $this->provider->retrieveByToken($apiToken);
+			$this->authUser = $user;
+			return $this;
+		}
+
+		if (!$user) {
+			if (empty($credentials)) {
+				$credentials             = [];
+				$credentials['login']    = $this->request->get('login');
+				$credentials['password'] = $this->request->get('password');
+			}
+			$user = $this->provider->retrieveByCredentials($credentials);
+		}
+
 		if (!$user) return false;
 
 		foreach ($this->provider->dbPasswordFields as $dbPasswordField) {

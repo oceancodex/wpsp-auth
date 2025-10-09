@@ -10,6 +10,10 @@ class TokensGuard extends BaseGuard {
 	private ?DBAuthUser $DBAuthUser = null;
 
 	public function user() {
+		if ($this->authUser === null) {
+			$this->attempt();
+		}
+
 		if (!$this->authUser) return null;
 
 		if ($this->authUser instanceof \stdClass) {
