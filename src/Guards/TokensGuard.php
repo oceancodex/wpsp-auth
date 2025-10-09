@@ -9,6 +9,17 @@ class TokensGuard extends BaseGuard {
 
 	private ?DBAuthUserModel $DBAuthUser = null;
 
+	public function attempt(array $credentials = []) {
+		$apiToken = $this->funcs->_getBearerToken();
+		if ($apiToken) {
+			$user = $this->provider->retrieveByToken($apiToken);
+			if (!$user) return false;
+			$this->authUser = $user;
+			return $this;
+		}
+		return false;
+	}
+
 	public function user() {
 		if ($this->authUser === null) {
 			$this->attempt();

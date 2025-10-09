@@ -81,6 +81,8 @@ class AuthServiceProvider extends BaseInstances {
 	}
 
 	public function findResultByLogin(string $login): ?object {
+
+		// Eloquent.
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
@@ -100,6 +102,8 @@ class AuthServiceProvider extends BaseInstances {
 
 			return $model ?: null;
 		}
+
+		// WordPress "$wpdb".
 		elseif ($this->table) {
 			global $wpdb;
 			$whereString = '';
@@ -128,7 +132,9 @@ class AuthServiceProvider extends BaseInstances {
 			));
 			return $row ?: null;
 		}
+
 		return null;
+
 	}
 
 	/*

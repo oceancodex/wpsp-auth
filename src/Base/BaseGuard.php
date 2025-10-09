@@ -2,10 +2,12 @@
 
 namespace WPSPCORE\Auth\Base;
 
+use WPSPCORE\Auth\Models\DBAuthUserModel;
 use WPSPCORE\Base\BaseInstances;
 
 abstract class BaseGuard extends BaseInstances {
 
+	/** @var \WPSPCORE\Auth\Providers\AuthServiceProvider */
 	protected $provider;
 	protected $sessionKey;
 	protected $guardName;
@@ -30,7 +32,7 @@ abstract class BaseGuard extends BaseInstances {
 	 */
 
 	public function __get($name) {
-		if ($name === 'user') return $this->user();
+		if ($name == 'user') return $this->user();
 		return null;
 	}
 
@@ -40,15 +42,14 @@ abstract class BaseGuard extends BaseInstances {
 
 	abstract public function user();
 
+	abstract public function attempt(array $credentials = []);
+
 	/*
 	 *
 	 */
 
 	public function id() {
 		if ($this->guardConfig['driver'] == 'session') {
-			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
-		}
-		elseif ($this->guardConfig['driver'] == 'sanctum') {
 			return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
 		}
 		elseif ($this->guardConfig['driver'] == 'token') {
@@ -82,60 +83,27 @@ abstract class BaseGuard extends BaseInstances {
 		return true;
 	}
 
-	public function attempt(array $credentials = []) {
-		$user = null;
-
-		$apiToken = $this->funcs->_getBearerToken();
-		if ($apiToken) {
-			$user = $this->provider->retrieveByToken($apiToken);
-			$this->authUser = $user;
-			return $this;
+	public function prepareUser($user, $dbModelClass) {
+		if ($user instanceof \stdClass) {
+			$user = new $dbModelClass(
+				$this->funcs->_getMainPath(),
+				$this->funcs->_getRootNamespace(),
+				$this->funcs->_getPrefixEnv(),
+				[
+					'auth_user'    => $this->authUser,
+					'provider'     => $this->provider,
+					'session_key'  => $this->sessionKey,
+					'guard_name'   => $this->guardName,
+					'guard_config' => $this->guardConfig,
+				]
+			);
+		}
+		else {
+			// Add guard name.
+			$user->setAttribute('guard_name', $this->guardName);
 		}
 
-		if (!$user) {
-			if (empty($credentials)) {
-				$credentials             = [];
-				$credentials['login']    = $this->request->get('login');
-				$credentials['password'] = $this->request->get('password');
-			}
-			$user = $this->provider->retrieveByCredentials($credentials);
-		}
-
-		if (!$user) return false;
-
-		foreach ($this->provider->dbPasswordFields as $dbPasswordField) {
-			foreach ($this->provider->formPasswordFields as $formPasswordField) {
-				$given  = $credentials[$formPasswordField] ?? null;
-				$hashed = $user->{$dbPasswordField} ?? null;
-				if ($given !== null && $hashed && wp_check_password($given, $hashed)) {
-					$id = null;
-					foreach ($this->provider->dbIdFields as $dbIdField) {
-						try {
-							$id = $user->{$dbIdField} ?? null;
-						}
-						catch (\Exception $e) {
-							continue;
-						}
-						if ($id) break;
-					}
-					if ($id === null) return false;
-
-					if ($this->guardConfig['driver'] == 'session') {
-						$_SESSION[$this->sessionKey] = $id;
-						return $this;
-					}
-					elseif ($this->guardConfig['driver'] == 'sanctum') {
-						$_SESSION[$this->sessionKey] = $id;
-						return $this;
-					}
-					elseif ($this->guardConfig['driver'] == 'token') {
-						$this->authUser = $user;
-						return $this;
-					}
-				}
-			}
-		}
-		return false;
+		return $user;
 	}
 
 }
