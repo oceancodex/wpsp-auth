@@ -10,7 +10,7 @@ use WPSPCORE\Auth\Providers\AuthServiceProvider;
 class Auth extends BaseInstances {
 
 	public static ?self $instance = null;
-	protected array     $guards   = [];
+	public array        $guards   = [];
 
 	/*
 	 *
