@@ -68,7 +68,7 @@ abstract class BaseGuard extends BaseInstances {
 				$this->funcs->_getRootNamespace(),
 				$this->funcs->_getPrefixEnv(),
 				[
-					'auth_user'    => $this->authUser,
+					'auth_user'    => $user,
 					'provider'     => $this->provider,
 					'session_key'  => $this->sessionKey,
 					'guard_name'   => $this->guardName,
