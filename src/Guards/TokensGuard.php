@@ -7,7 +7,7 @@ use WPSPCORE\Auth\Models\DBAuthUserModel;
 
 class TokensGuard extends BaseGuard {
 
-	public function attempt(array $credentials = []) {
+	public function attempt($credentials = []) {
 
 		// Prepare credentials.
 		if (empty($credentials)) {
@@ -44,7 +44,7 @@ class TokensGuard extends BaseGuard {
 	 *
 	 */
 
-	public function id(): ?int {
+	public function id() {
 		return $this->authUser->id ?? $this->authUser->ID ?? null;
 	}
 
@@ -67,7 +67,7 @@ class TokensGuard extends BaseGuard {
 		return $this->authUser;
 	}
 
-	public function check(): bool {
+	public function check() {
 		if (!$this->authUser) {
 			$this->attempt();
 		}

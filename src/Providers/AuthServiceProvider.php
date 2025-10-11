@@ -7,14 +7,14 @@ use WPSPCORE\Base\BaseInstances;
 class AuthServiceProvider extends BaseInstances {
 
 	/** @var string|null|\MongoDB\Laravel\Eloquent\Model|\Illuminate\Database\Eloquent\Model */
-	public         $modelClass         = null;
-	public ?string $table              = null;
-	public ?array  $formLoginFields    = ['login'];
-	public ?array  $formPasswordFields = ['password'];
-	public ?array  $dbIdFields         = ['id'];
-	public ?array  $dbLoginFields      = ['username', 'email'];
-	public ?array  $dbPasswordFields   = ['password'];
-	public ?array  $dbTokenFields      = ['api_token'];
+	public $modelClass         = null;
+	public $table              = null;
+	public $formLoginFields    = ['login'];
+	public $formPasswordFields = ['password'];
+	public $dbIdFields         = ['id'];
+	public $dbLoginFields      = ['username', 'email'];
+	public $dbPasswordFields   = ['password'];
+	public $dbTokenFields      = ['api_token'];
 
 	/*
 	 *
@@ -29,7 +29,7 @@ class AuthServiceProvider extends BaseInstances {
 	 *
 	 */
 
-	public function findResultById(int $id): ?object {
+	public function findResultById($id) {
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
@@ -80,8 +80,7 @@ class AuthServiceProvider extends BaseInstances {
 		return null;
 	}
 
-	public function findResultByLogin(string $login): ?object {
-
+	public function findResultByLogin($login) {
 		// Eloquent.
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
@@ -134,18 +133,17 @@ class AuthServiceProvider extends BaseInstances {
 		}
 
 		return null;
-
 	}
 
 	/*
 	 *
 	 */
 
-	public function retrieveById(int $id) {
+	public function retrieveById($id) {
 		return $this->findResultById($id);
 	}
 
-	public function retrieveByToken(?string $token = null) {
+	public function retrieveByToken($token = null) {
 		if (!$token) return null;
 		if ($this->modelClass && class_exists($this->modelClass)) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
@@ -197,9 +195,9 @@ class AuthServiceProvider extends BaseInstances {
 		return null;
 	}
 
-	public function retrieveByAccessToken(string $token) {}
+	public function retrieveByAccessToken($token) {}
 
-	public function retrieveByCredentials(array $credentials) {
+	public function retrieveByCredentials($credentials) {
 		if (!empty($this->formLoginFields)) {
 			foreach ($this->formLoginFields as $formLoginField) {
 				if (!empty($credentials[$formLoginField])) {
@@ -209,6 +207,16 @@ class AuthServiceProvider extends BaseInstances {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param string[] $formPasswordFields
+	 *
+	 * @return AuthServiceProvider
+	 */
+	public function setFormPasswordFields($formPasswordFields) {
+		$this->formPasswordFields = $formPasswordFields;
+		return $this;
 	}
 
 }

@@ -9,19 +9,13 @@ use WPSPCORE\Auth\Providers\AuthServiceProvider;
 
 class Auth extends BaseInstances {
 
-	public array        $guards   = [];
+	public $guards   = [];
 
 	/*
 	 *
 	 */
 
-	public static function makeProvider(
-		?string $mainPath,
-		?string $rootNamespace,
-		?string $prefixEnv,
-		?string $providerName,
-		?array $configs
-	) {
+	public static function makeProvider($mainPath, $rootNamespace, $prefixEnv, $providerName, $configs) {
 		$providers = $configs['providers'] ?? [];
 		$provider  = $providers[$providerName] ?? null;
 
@@ -111,7 +105,7 @@ class Auth extends BaseInstances {
 	 *
 	 */
 
-	public function guard(?string $name = null) {
+	public function guard($name = null) {
 
 		// Đọc toàn bộ config auth từ plugin chính (wpsp/config/auth.php).
 		$configs = $this->funcs->_config('auth') ?? [];

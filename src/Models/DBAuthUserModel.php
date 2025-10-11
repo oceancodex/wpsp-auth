@@ -16,7 +16,7 @@ class DBAuthUserModel extends BaseInstances {
 	public $permissions;
 	public $rolesAndPermissions;
 
-	public function afterInstanceConstruct(): void {
+	public function afterInstanceConstruct() {
 		$this->guardName            = $this->customProperties['guard_name'];
 		$this->authUser             = $this->customProperties['auth_user'];
 		$this->authUser->guard_name = $this->guardName;
@@ -53,11 +53,11 @@ class DBAuthUserModel extends BaseInstances {
 	 *
 	 */
 
-	public function id(): int {
+	public function id() {
 		return $this->authUser->id ?? ($this->authUser->ID ?? 0);
 	}
 
-	public function save(): bool {
+	public function save() {
 		global $wpdb;
 
 		if (!$this->authUser) {
@@ -113,7 +113,7 @@ class DBAuthUserModel extends BaseInstances {
 	 */
 
 
-	public function toArray(): array {
+	public function toArray() {
 		$data = is_object($this->authUser) ? get_object_vars($this->authUser) : (array)$this->authUser;
 
 //		$data['roles']                 = $this->roles;
@@ -127,7 +127,7 @@ class DBAuthUserModel extends BaseInstances {
 	 *
 	 */
 
-	private function getTableName(): ?string {
+	private function getTableName() {
 		// Get auth configuration
 		$authConfig = $this->funcs->_config('auth');
 

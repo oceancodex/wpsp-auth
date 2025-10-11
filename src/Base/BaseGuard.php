@@ -39,19 +39,19 @@ abstract class BaseGuard extends BaseInstances {
 	 *
 	 */
 
-	abstract public function attempt(array $credentials = []);
+	abstract public function attempt($credentials = []);
 
-	abstract public function id(): ?int;
+	abstract public function id();
 
 	abstract public function user();
 
-	abstract public function check(): bool;
+	abstract public function check();
 
 	/*
 	 *
 	 */
 
-	public function logout(): bool {
+	public function logout() {
 		if (in_array($this->guardConfig['driver'], ['session', 'sanctum'])) {
 			unset($_SESSION[$this->sessionKey]);
 		}

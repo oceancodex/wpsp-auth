@@ -7,7 +7,7 @@ use WPSPCORE\Auth\Models\DBAuthUserModel;
 
 class SessionsGuard extends BaseGuard {
 
-	public function attempt(array $credentials = []) {
+	public function attempt($credentials = []) {
 		if (empty($credentials)) {
 			$credentials             = [];
 			$credentials['login']    = $this->request->get('login');
@@ -48,7 +48,7 @@ class SessionsGuard extends BaseGuard {
 	 *
 	 */
 
-	public function id(): ?int {
+	public function id() {
 		return !empty($_SESSION[$this->sessionKey]) ? (int)$_SESSION[$this->sessionKey] : null;
 	}
 
@@ -60,7 +60,7 @@ class SessionsGuard extends BaseGuard {
 		return $this->authUser;
 	}
 
-	public function check(): bool {
+	public function check() {
 		return $this->id() !== null;
 	}
 
