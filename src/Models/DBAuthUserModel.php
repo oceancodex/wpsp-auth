@@ -3,12 +3,12 @@
 namespace WPSPCORE\Auth\Models;
 
 use WPSPCORE\Base\BaseInstances;
-use WPSPCORE\Permission\Traits\DBPermissionTrait;
-use WPSPCORE\Sanctum\Traits\DBSanctumTokensTrait;
+use WPSPCORE\Permission\Traits\DBUserPermissionTrait;
+use WPSPCORE\Sanctum\Traits\DBUserSanctumTokensTrait;
 
 class DBAuthUserModel extends BaseInstances {
 
-	use DBPermissionTrait, DBSanctumTokensTrait;
+	use DBUserPermissionTrait, DBUserSanctumTokensTrait;
 
 	public $guardName;
 	public $authUser;
