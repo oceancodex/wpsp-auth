@@ -20,10 +20,10 @@ abstract class BaseGuard extends BaseInstances {
 	 */
 
 	public function afterInstanceConstruct() {
-		$this->provider    = $this->customProperties['provider'];
-		$this->sessionKey  = $this->customProperties['session_key'];
-		$this->guardName   = $this->customProperties['guard_name'] ?? 'web';
-		$this->guardConfig = $this->customProperties['guard_config'] ?? [];
+		$this->provider    = $this->extraParams['provider'];
+		$this->sessionKey  = $this->extraParams['session_key'];
+		$this->guardName   = $this->extraParams['guard_name'] ?? 'web';
+		$this->guardConfig = $this->extraParams['guard_config'] ?? [];
 	}
 
 	/*
