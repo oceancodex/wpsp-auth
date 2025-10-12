@@ -12,17 +12,17 @@ class DBAuthUserModel extends BaseInstances {
 
 	public $guardName;
 	public $authUser;
-	public $roles;
-	public $permissions;
-	public $rolesAndPermissions;
+//	public $roles;
+//	public $permissions;
+//	public $roles_and_permissions;
 
 	public function afterInstanceConstruct() {
-		$this->guardName            = $this->customProperties['guard_name'];
-		$this->authUser             = $this->customProperties['auth_user'];
-		$this->authUser->guard_name = $this->guardName;
-//		$this->roles               = $this->roles();
-//		$this->permissions         = $this->permissions();
-//		$this->rolesAndPermissions = $this->rolesAndPermissions();
+		$this->guardName             = $this->extraParams['guard_name'];
+		$this->authUser              = $this->extraParams['auth_user'];
+		$this->authUser->guard_name  = $this->guardName;
+//		$this->roles                 = $this->roles();
+//		$this->permissions           = $this->permissions();
+//		$this->roles_and_permissions = $this->rolesAndPermissions();
 	}
 
 	/*
@@ -36,8 +36,14 @@ class DBAuthUserModel extends BaseInstances {
 	}
 
 	public function __get($name) {
-		if (is_object($this->authUser)) {
-			return $this->authUser->$name ?? null;
+		if ($name == 'roles') {
+			return $this->roles();
+		}
+		elseif ($name == 'permissions') {
+			return $this->permissions();
+		}
+		elseif ($name == 'roles_and_permissions') {
+			return $this->rolesAndPermissions();
 		}
 		return null;
 	}
