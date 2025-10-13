@@ -45,7 +45,10 @@ class DBAuthUserModel extends BaseInstances {
 		elseif ($name == 'roles_and_permissions') {
 			return $this->rolesAndPermissions();
 		}
-		return null;
+//		elseif (isset($this->$name)) {
+		return $this->authUser->$name;
+//		}
+//		return null;
 	}
 
 	public function __isset($name) {
