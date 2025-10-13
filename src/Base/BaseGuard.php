@@ -31,7 +31,9 @@ abstract class BaseGuard extends BaseInstances {
 	 */
 
 	public function __get($name) {
-		if ($name == 'user') return $this->user();
+		if ($name == 'user') {
+			return $this->user();
+		}
 		return null;
 	}
 
