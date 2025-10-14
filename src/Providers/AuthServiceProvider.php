@@ -21,8 +21,8 @@ class AuthServiceProvider extends BaseInstances {
 	 */
 
 	public function afterInstanceConstruct() {
-		$this->table      = $this->customProperties['table'];
-		$this->modelClass = $this->customProperties['model_class'] ?? null;
+		$this->table      = $this->extraParams['table'];
+		$this->modelClass = $this->extraParams['model_class'] ?? null;
 	}
 
 	/*
