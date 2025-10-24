@@ -8,7 +8,6 @@ use WPSPCORE\Auth\Models\DBAuthUserModel;
 class TokensGuard extends BaseGuard {
 
 	public function attempt($credentials = []) {
-
 		// Prepare credentials.
 		if (empty($credentials)) {
 			$credentials             = [];
@@ -37,7 +36,6 @@ class TokensGuard extends BaseGuard {
 		}
 
 		return false;
-
 	}
 
 	/*
