@@ -20,7 +20,26 @@ class TokensGuard extends BaseGuard {
 			$user = $this->provider->retrieveByCredentials($credentials);
 			if ($user) {
 				$this->authUser = $this->prepareUser($user, DBAuthUserModel::class);
-				return $this;
+				foreach ($this->provider->dbPasswordFields as $dbPasswordField) {
+					foreach ($this->provider->formPasswordFields as $formPasswordField) {
+						$given  = $credentials[$formPasswordField] ?? null;
+						$hashed = $user->{$dbPasswordField} ?? null;
+						if ($given !== null && $hashed && wp_check_password($given, $hashed)) {
+							$id = null;
+							foreach ($this->provider->dbIdFields as $dbIdField) {
+								try {
+									$id = $user->{$dbIdField} ?? null;
+								}
+								catch (\Exception $e) {
+									continue;
+								}
+								if ($id) break;
+							}
+							if (!$id) return false;
+							return $this;
+						}
+					}
+				}
 			}
 		}
 

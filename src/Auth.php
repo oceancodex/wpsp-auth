@@ -157,9 +157,9 @@ class Auth extends BaseInstances {
 					$this->rootNamespace,
 					$this->prefixEnv,
 					[
-						'provider'     => $provider,
-						'guard_name'   => $name,
-						'guard_config' => $guardConfig,
+						'provider'        => $provider,
+						'guard_name'      => $name,
+						'guard_config'    => $guardConfig,
 					]
 				);
 			}
