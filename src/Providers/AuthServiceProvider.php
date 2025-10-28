@@ -209,11 +209,6 @@ class AuthServiceProvider extends BaseInstances {
 		return null;
 	}
 
-	/**
-	 * @param string[] $formPasswordFields
-	 *
-	 * @return AuthServiceProvider
-	 */
 	public function setFormPasswordFields($formPasswordFields) {
 		$this->formPasswordFields = $formPasswordFields;
 		return $this;
