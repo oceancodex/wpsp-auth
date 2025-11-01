@@ -88,4 +88,12 @@ abstract class BaseGuard extends BaseInstances {
 		return $user;
 	}
 
+	public function getAuthUser() {
+		return $this->authUser;
+	}
+
+	public function getProvider() {
+		return $this->provider;
+	}
+
 }
