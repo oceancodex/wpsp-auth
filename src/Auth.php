@@ -15,7 +15,7 @@ class Auth extends BaseInstances {
 	 *
 	 */
 
-	public static function makeProvider($mainPath, $rootNamespace, $prefixEnv, $providerName, $configs) {
+	public function makeProvider($mainPath, $rootNamespace, $prefixEnv, $providerName, $configs) {
 		$providers = $configs['providers'] ?? [];
 		$provider  = $providers[$providerName] ?? null;
 
@@ -43,6 +43,8 @@ class Auth extends BaseInstances {
 					return new $authService($mainPath, $rootNamespace, $prefixEnv, [
 						'table'       => $table,
 						'model_class' => $modelClass,
+
+						'funcs'       => $this->funcs,
 					]);
 				}
 				else {
@@ -53,6 +55,8 @@ class Auth extends BaseInstances {
 						[
 							'table'       => $table,
 							'model_class' => $modelClass,
+
+							'funcs'       => $this->funcs,
 						]
 					);
 				}
@@ -64,6 +68,8 @@ class Auth extends BaseInstances {
 				[
 					'table'       => $table,
 					'model_class' => $modelClass,
+
+					'funcs'       => $this->funcs,
 				]
 			);
 		}
@@ -74,6 +80,8 @@ class Auth extends BaseInstances {
 				return new $authService($mainPath, $rootNamespace, $prefixEnv, [
 					'table'       => $table,
 					'model_class' => null,
+
+					'funcs'       => $this->funcs,
 				]);
 			}
 			else {
@@ -84,6 +92,8 @@ class Auth extends BaseInstances {
 					[
 						'table'       => $table,
 						'model_class' => null,
+
+						'funcs'       => $this->funcs,
 					]
 				);
 			}
@@ -97,6 +107,8 @@ class Auth extends BaseInstances {
 			[
 				'table'       => $table,
 				'model_class' => null,
+
+				'funcs'       => $this->funcs,
 			]
 		);
 	}
@@ -124,7 +136,7 @@ class Auth extends BaseInstances {
 			$providerName    = $guardConfig['provider'] ?? ($configs['defaults']['provider'] ?? 'users');
 
 			// Khởi tạo provider từ cấu hình.
-			$provider = self::makeProvider(
+			$provider = $this->makeProvider(
 				$this->mainPath,
 				$this->rootNamespace,
 				$this->prefixEnv,
@@ -146,6 +158,8 @@ class Auth extends BaseInstances {
 						'session_key'  => $sessionKey,
 						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
+
+						'funcs'        => $this->funcs,
 					]
 				);
 			}
@@ -160,6 +174,8 @@ class Auth extends BaseInstances {
 						'provider'        => $provider,
 						'guard_name'      => $name,
 						'guard_config'    => $guardConfig,
+
+						'funcs'           => $this->funcs,
 					]
 				);
 			}
@@ -175,6 +191,8 @@ class Auth extends BaseInstances {
 						'session_key'  => $sessionKey,
 						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
+
+						'funcs'        => $this->funcs,
 					]
 				);
 			}
