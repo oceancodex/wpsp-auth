@@ -73,8 +73,10 @@ abstract class BaseGuard extends BaseInstances {
 					'auth_user'    => $user,
 					'provider'     => $this->provider,
 					'session_key'  => $this->sessionKey,
-					'guard_name'   => $this->guardName,
+					'guard_name'   => $user->guard_name ?? $this->guardName,
 					'guard_config' => $this->guardConfig,
+
+					'funcs'        => $this->funcs
 				]
 			);
 		}
