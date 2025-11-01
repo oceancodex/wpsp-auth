@@ -15,7 +15,7 @@ class Auth extends BaseInstances {
 	 *
 	 */
 
-	public static function makeProvider($mainPath, $rootNamespace, $prefixEnv, $providerName, $configs) {
+	public function makeProvider($mainPath, $rootNamespace, $prefixEnv, $providerName, $configs) {
 		$providers = $configs['providers'] ?? [];
 		$provider  = $providers[$providerName] ?? null;
 
@@ -43,6 +43,20 @@ class Auth extends BaseInstances {
 					return new $authService($mainPath, $rootNamespace, $prefixEnv, [
 						'table'       => $table,
 						'model_class' => $modelClass,
+
+						'funcs'              => $this->funcs,
+						'environment'        => null,
+						'validation'         => null,
+
+						'prepare_funcs'      => true,
+						'prepare_request'    => false,
+
+						'unset_funcs'        => false,
+						'unset_request'      => true,
+						'unset_validation'   => true,
+						'unset_environment'  => true,
+
+						'unset_extra_params' => true,
 					]);
 				}
 				else {
@@ -53,6 +67,20 @@ class Auth extends BaseInstances {
 						[
 							'table'       => $table,
 							'model_class' => $modelClass,
+
+							'funcs'              => $this->funcs,
+							'environment'        => null,
+							'validation'         => null,
+
+							'prepare_funcs'      => true,
+							'prepare_request'    => false,
+
+							'unset_funcs'        => false,
+							'unset_request'      => true,
+							'unset_validation'   => true,
+							'unset_environment'  => true,
+
+							'unset_extra_params' => true,
 						]
 					);
 				}
@@ -64,6 +92,20 @@ class Auth extends BaseInstances {
 				[
 					'table'       => $table,
 					'model_class' => $modelClass,
+
+					'funcs'              => $this->funcs,
+					'environment'        => null,
+					'validation'         => null,
+
+					'prepare_funcs'      => true,
+					'prepare_request'    => false,
+
+					'unset_funcs'        => false,
+					'unset_request'      => true,
+					'unset_validation'   => true,
+					'unset_environment'  => true,
+
+					'unset_extra_params' => true,
 				]
 			);
 		}
@@ -74,6 +116,20 @@ class Auth extends BaseInstances {
 				return new $authService($mainPath, $rootNamespace, $prefixEnv, [
 					'table'       => $table,
 					'model_class' => null,
+
+					'funcs'              => $this->funcs,
+					'environment'        => null,
+					'validation'         => null,
+
+					'prepare_funcs'      => true,
+					'prepare_request'    => false,
+
+					'unset_funcs'        => false,
+					'unset_request'      => true,
+					'unset_validation'   => true,
+					'unset_environment'  => true,
+
+					'unset_extra_params' => true,
 				]);
 			}
 			else {
@@ -84,6 +140,20 @@ class Auth extends BaseInstances {
 					[
 						'table'       => $table,
 						'model_class' => null,
+
+						'funcs'              => $this->funcs,
+						'environment'        => null,
+						'validation'         => null,
+
+						'prepare_funcs'      => true,
+						'prepare_request'    => false,
+
+						'unset_funcs'        => false,
+						'unset_request'      => true,
+						'unset_validation'   => true,
+						'unset_environment'  => true,
+
+						'unset_extra_params' => true,
 					]
 				);
 			}
@@ -97,6 +167,20 @@ class Auth extends BaseInstances {
 			[
 				'table'       => $table,
 				'model_class' => null,
+
+				'funcs'              => $this->funcs,
+				'environment'        => null,
+				'validation'         => null,
+
+				'prepare_funcs'      => true,
+				'prepare_request'    => false,
+
+				'unset_funcs'        => false,
+				'unset_request'      => true,
+				'unset_validation'   => true,
+				'unset_environment'  => true,
+
+				'unset_extra_params' => true,
 			]
 		);
 	}
@@ -124,7 +208,7 @@ class Auth extends BaseInstances {
 			$providerName    = $guardConfig['provider'] ?? ($configs['defaults']['provider'] ?? 'users');
 
 			// Khởi tạo provider từ cấu hình.
-			$provider = self::makeProvider(
+			$provider = $this->makeProvider(
 				$this->mainPath,
 				$this->rootNamespace,
 				$this->prefixEnv,
@@ -146,6 +230,20 @@ class Auth extends BaseInstances {
 						'session_key'  => $sessionKey,
 						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
+
+						'funcs'              => $this->funcs,
+						'environment'        => null,
+						'validation'         => null,
+
+						'prepare_funcs'      => true,
+						'prepare_request'    => false,
+
+						'unset_funcs'        => false,
+						'unset_request'      => true,
+						'unset_validation'   => true,
+						'unset_environment'  => true,
+
+						'unset_extra_params' => true,
 					]
 				);
 			}
@@ -160,6 +258,20 @@ class Auth extends BaseInstances {
 						'provider'        => $provider,
 						'guard_name'      => $name,
 						'guard_config'    => $guardConfig,
+
+						'funcs'              => $this->funcs,
+						'environment'        => null,
+						'validation'         => null,
+
+						'prepare_funcs'      => true,
+						'prepare_request'    => false,
+
+						'unset_funcs'        => false,
+						'unset_request'      => true,
+						'unset_validation'   => true,
+						'unset_environment'  => true,
+
+						'unset_extra_params' => true,
 					]
 				);
 			}
@@ -175,6 +287,20 @@ class Auth extends BaseInstances {
 						'session_key'  => $sessionKey,
 						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
+
+						'funcs'              => $this->funcs,
+						'environment'        => null,
+						'validation'         => null,
+
+						'prepare_funcs'      => true,
+						'prepare_request'    => false,
+
+						'unset_funcs'        => false,
+						'unset_request'      => true,
+						'unset_validation'   => true,
+						'unset_environment'  => true,
+
+						'unset_extra_params' => true,
 					]
 				);
 			}

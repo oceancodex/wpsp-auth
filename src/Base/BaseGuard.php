@@ -73,8 +73,22 @@ abstract class BaseGuard extends BaseInstances {
 					'auth_user'    => $user,
 					'provider'     => $this->provider,
 					'session_key'  => $this->sessionKey,
-					'guard_name'   => $this->guardName,
+					'guard_name'   => $user->guard_name ?? $this->guardName,
 					'guard_config' => $this->guardConfig,
+
+					'funcs'              => $this->funcs,
+					'environment'        => null,
+					'validation'         => null,
+
+					'prepare_funcs'      => true,
+					'prepare_request'    => false,
+
+					'unset_funcs'        => false,
+					'unset_request'      => true,
+					'unset_validation'   => true,
+					'unset_environment'  => true,
+
+					'unset_extra_params' => true,
 				]
 			);
 		}
@@ -84,6 +98,14 @@ abstract class BaseGuard extends BaseInstances {
 		}
 
 		return $user;
+	}
+
+	public function getAuthUser() {
+		return $this->authUser;
+	}
+
+	public function getProvider() {
+		return $this->provider;
 	}
 
 }

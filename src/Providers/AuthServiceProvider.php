@@ -30,7 +30,7 @@ class AuthServiceProvider extends BaseInstances {
 	 */
 
 	public function findResultById($id) {
-		if ($this->modelClass && class_exists($this->modelClass)) {
+		if ($this->modelClass && class_exists($this->modelClass) && !$this->table) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
 
@@ -82,7 +82,7 @@ class AuthServiceProvider extends BaseInstances {
 
 	public function findResultByLogin($login) {
 		// Eloquent.
-		if ($this->modelClass && class_exists($this->modelClass)) {
+		if ($this->modelClass && class_exists($this->modelClass) && !$this->table) {
 			/** @var \Illuminate\Database\Eloquent\Builder $query */
 			$query = ($this->modelClass)::query();
 
