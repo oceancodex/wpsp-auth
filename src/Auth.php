@@ -44,19 +44,7 @@ class Auth extends BaseInstances {
 						'table'       => $table,
 						'model_class' => $modelClass,
 
-						'funcs'              => $this->funcs,
-						'environment'        => null,
-						'validation'         => null,
-
-						'prepare_funcs'      => true,
-						'prepare_request'    => false,
-
-						'unset_funcs'        => false,
-						'unset_request'      => true,
-						'unset_validation'   => true,
-						'unset_environment'  => true,
-
-						'unset_extra_params' => true,
+						'funcs'       => $this->funcs,
 					]);
 				}
 				else {
@@ -68,19 +56,7 @@ class Auth extends BaseInstances {
 							'table'       => $table,
 							'model_class' => $modelClass,
 
-							'funcs'              => $this->funcs,
-							'environment'        => null,
-							'validation'         => null,
-
-							'prepare_funcs'      => true,
-							'prepare_request'    => false,
-
-							'unset_funcs'        => false,
-							'unset_request'      => true,
-							'unset_validation'   => true,
-							'unset_environment'  => true,
-
-							'unset_extra_params' => true,
+							'funcs'       => $this->funcs,
 						]
 					);
 				}
@@ -93,19 +69,7 @@ class Auth extends BaseInstances {
 					'table'       => $table,
 					'model_class' => $modelClass,
 
-					'funcs'              => $this->funcs,
-					'environment'        => null,
-					'validation'         => null,
-
-					'prepare_funcs'      => true,
-					'prepare_request'    => false,
-
-					'unset_funcs'        => false,
-					'unset_request'      => true,
-					'unset_validation'   => true,
-					'unset_environment'  => true,
-
-					'unset_extra_params' => true,
+					'funcs'       => $this->funcs,
 				]
 			);
 		}
@@ -117,19 +81,7 @@ class Auth extends BaseInstances {
 					'table'       => $table,
 					'model_class' => null,
 
-					'funcs'              => $this->funcs,
-					'environment'        => null,
-					'validation'         => null,
-
-					'prepare_funcs'      => true,
-					'prepare_request'    => false,
-
-					'unset_funcs'        => false,
-					'unset_request'      => true,
-					'unset_validation'   => true,
-					'unset_environment'  => true,
-
-					'unset_extra_params' => true,
+					'funcs'       => $this->funcs,
 				]);
 			}
 			else {
@@ -141,19 +93,7 @@ class Auth extends BaseInstances {
 						'table'       => $table,
 						'model_class' => null,
 
-						'funcs'              => $this->funcs,
-						'environment'        => null,
-						'validation'         => null,
-
-						'prepare_funcs'      => true,
-						'prepare_request'    => false,
-
-						'unset_funcs'        => false,
-						'unset_request'      => true,
-						'unset_validation'   => true,
-						'unset_environment'  => true,
-
-						'unset_extra_params' => true,
+						'funcs'       => $this->funcs,
 					]
 				);
 			}
@@ -168,19 +108,7 @@ class Auth extends BaseInstances {
 				'table'       => $table,
 				'model_class' => null,
 
-				'funcs'              => $this->funcs,
-				'environment'        => null,
-				'validation'         => null,
-
-				'prepare_funcs'      => true,
-				'prepare_request'    => false,
-
-				'unset_funcs'        => false,
-				'unset_request'      => true,
-				'unset_validation'   => true,
-				'unset_environment'  => true,
-
-				'unset_extra_params' => true,
+				'funcs'       => $this->funcs,
 			]
 		);
 	}
@@ -231,19 +159,7 @@ class Auth extends BaseInstances {
 						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
 
-						'funcs'              => $this->funcs,
-						'environment'        => null,
-						'validation'         => null,
-
-						'prepare_funcs'      => true,
-						'prepare_request'    => false,
-
-						'unset_funcs'        => false,
-						'unset_request'      => true,
-						'unset_validation'   => true,
-						'unset_environment'  => true,
-
-						'unset_extra_params' => true,
+						'funcs'        => $this->funcs,
 					]
 				);
 			}
@@ -259,19 +175,7 @@ class Auth extends BaseInstances {
 						'guard_name'      => $name,
 						'guard_config'    => $guardConfig,
 
-						'funcs'              => $this->funcs,
-						'environment'        => null,
-						'validation'         => null,
-
-						'prepare_funcs'      => true,
-						'prepare_request'    => false,
-
-						'unset_funcs'        => false,
-						'unset_request'      => true,
-						'unset_validation'   => true,
-						'unset_environment'  => true,
-
-						'unset_extra_params' => true,
+						'funcs'           => $this->funcs,
 					]
 				);
 			}
@@ -288,19 +192,7 @@ class Auth extends BaseInstances {
 						'guard_name'   => $name,
 						'guard_config' => $guardConfig,
 
-						'funcs'              => $this->funcs,
-						'environment'        => null,
-						'validation'         => null,
-
-						'prepare_funcs'      => true,
-						'prepare_request'    => false,
-
-						'unset_funcs'        => false,
-						'unset_request'      => true,
-						'unset_validation'   => true,
-						'unset_environment'  => true,
-
-						'unset_extra_params' => true,
+						'funcs'        => $this->funcs,
 					]
 				);
 			}
